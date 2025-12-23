@@ -1,0 +1,42 @@
+# ShmupArch Linux .gitignore
+
+# Cores (download via setup.sh)
+cores/*.so
+cores/*.dll
+
+# User data
+saves/
+states/
+screenshots/
+recordings/
+logs/
+playlists/
+*.lpl
+
+# ROMs (user provides their own)
+roms/
+
+# System files (BIOS, etc)
+system/
+
+# Downloadable RetroArch assets
+shaders/
+overlays/
+filters/
+database/
+cheats/
+cursors/
+info/
+thumbnails/
+assets/
+
+# Temporary files
+*.tmp
+*.bak
+*~
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo

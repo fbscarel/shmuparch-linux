@@ -1,0 +1,114 @@
+ShmupArch Linux - Low Latency Arcade Configuration
+Based on ShmupArch 7.0 by Mark-MSX / The Electric Underground
+================================================================================
+
+QUICK START:
+  1. Install RetroArch: sudo pacman -S retroarch
+  2. Place ROMs in: /home/fbs/src/ShmupArch/roms/
+  3. Launch: ./shmuparch.sh
+  4. Or with ROM: ./shmuparch.sh /path/to/garegga.zip
+
+================================================================================
+KEY LOW-LATENCY SETTINGS (retroarch.cfg)
+================================================================================
+
+Run-Ahead (THE key latency reducer):
+  run_ahead_enabled = true
+  run_ahead_frames = 1 (default, game-specific overrides below)
+  run_ahead_secondary_instance = true (avoids audio glitches)
+
+Video Timing:
+  video_vsync = false (eliminates VSync delay)
+  video_threaded = false (single-thread for timing accuracy)
+  video_hard_sync = true (GPU synchronization)
+  video_frame_delay = 0 (no artificial delay)
+  video_max_swapchain_images = 2 (minimal buffering)
+
+Input:
+  input_poll_type_behavior = 0 (Early polling - fastest response)
+
+Audio:
+  audio_latency = 64 (ms, balance between lag and crackling)
+  audio_sync = true
+
+================================================================================
+GAME-SPECIFIC RUN-AHEAD FRAMES (config/FinalBurn Neo/)
+================================================================================
+
+2 Frames (Low inherent lag games):
+  esprade, blazstar, guwange, metalb, p47/p47j, rayforce
+  rtype, rtype2, mslug3, mslug4, mslug5
+
+3 Frames (Medium inherent lag games):
+  1941/1941j, batrider/batriderj, bbakraid/bbakraidj
+  bgaregga (+ state_slot = 0 for stage practice)
+  gigawing/gigawingj, progear/progearj, rtypeleo, mslug2, mslugx
+
+4 Frames (Higher inherent lag games):
+  gunbird/gunbird2, mmatrix/mmatrixj, s1945, mslug
+
+================================================================================
+FBNEO CORE SETTINGS (config/FinalBurn Neo/FinalBurn Neo.opt)
+================================================================================
+
+Critical Settings:
+  fbneo-cpu-speed-adjust = "400%" (4x CPU speed - Mark-MSX's secret sauce!)
+  fbneo-force-60hz = "enabled"
+  fbneo-samplerate = "48000"
+  fbneo-fm-interpolation = "4-point 3rd order"
+
+DIP Switch defaults for many shmups are pre-configured for:
+  - Japanese region (original difficulty/behavior)
+  - 3 lives
+  - Demo sounds on
+  - Continue enabled
+
+================================================================================
+DIAGNOSTICS / SERVICE MENU
+================================================================================
+
+Hold START at boot to enter service menu (fbneo-diagnostic-input = "Hold Start")
+
+================================================================================
+IF GAMES STUTTER/JITTER ON WEAK CPU
+================================================================================
+
+Edit retroarch.cfg:
+  video_frame_delay = "0"  (already set, leave at 0)
+
+If still stuttering, you may need to reduce run_ahead_frames in the
+game-specific config, or disable run-ahead entirely for demanding games.
+
+================================================================================
+SUPPORTED GAMES (preconfigured)
+================================================================================
+
+Cave: ESP Ra.De., DoDonPachi, Ketsui, Akai Katana, Mushihimesama Futari
+Toaplan: Truxton, Battle Garegga, Batsugun, Fire Shark, Batsugun
+Raizing: Batrider, Battle Bakraid
+Psikyo: Strikers 1945, Gunbird 1/2
+Capcom: 1941/1942/1943, Gigawing, Progear
+Irem: R-Type, R-Type II, R-Type Leo
+Taito: Rayforce, Darius, Metal Black
+SNK: Metal Slug series (run'n'gun)
+Konami: Gradius series
+...and many more via FBNeo's extensive arcade support
+
+================================================================================
+REFERENCES
+================================================================================
+
+ShmupArch 7.0 Tutorial Video:
+  https://www.youtube.com/watch?v=Sec3r6RKAPg
+
+Mark-MSX / The Electric Underground:
+  https://www.youtube.com/@TheElectricUnderground
+
+ShmupArchify (original automation tool):
+  https://github.com/zmnpl/shmuparchify
+
+Libretro Buildbot (nightly cores):
+  https://buildbot.libretro.com/nightly/linux/x86_64/latest/
+
+FBNeo Documentation:
+  https://docs.libretro.com/library/fbneo/
