@@ -19,6 +19,11 @@ FBNEO_CORE = SHMUPARCH_DIR / "cores" / "fbneo_libretro.so"
 MAME_CORE = SHMUPARCH_DIR / "cores" / "mame_libretro.so"
 ROM_DIR = Path("/mnt/z/roms/arcade")
 
+# MiSTer mode: stream to CRT via GroovyMister
+MISTER_MODE = False
+MISTER_RETROARCH_BIN = Path("/home/fbs/src/RetroArch/retroarch")
+MISTER_CONFIG_FILE = SHMUPARCH_DIR / "retroarch-mister.cfg"
+
 # NVIDIA GPU environment variables (force discrete GPU on hybrid systems)
 NVIDIA_ENV = {
     "__NV_PRIME_RENDER_OFFLOAD": "1",
@@ -139,34 +144,61 @@ def check_rom_exists(rom_name):
 
 
 def get_launch_env():
-    """Get environment with NVIDIA GPU variables set."""
+    """Get environment with NVIDIA GPU variables set (desktop mode only)."""
     env = os.environ.copy()
-    env.update(NVIDIA_ENV)
+    if MISTER_MODE:
+        # Force X11/XWayland for MiSTer mode - switchres needs xrandr
+        env["GDK_BACKEND"] = "x11"
+        env["QT_QPA_PLATFORM"] = "xcb"
+    else:
+        # NVIDIA GPU offload for desktop mode
+        env.update(NVIDIA_ENV)
     return env
 
 
+def get_retroarch_cmd():
+    """Get RetroArch binary path based on mode."""
+    if MISTER_MODE:
+        return str(MISTER_RETROARCH_BIN)
+    return "retroarch"
+
+
+def get_config_file():
+    """Get config file path based on mode."""
+    if MISTER_MODE:
+        return MISTER_CONFIG_FILE
+    return CONFIG_FILE
+
+
 def launch_game(rom_name, use_mame=False):
-    """Launch a game with RetroArch using NVIDIA GPU and game-performance."""
+    """Launch a game with RetroArch."""
     rom_path = ROM_DIR / f"{rom_name}.zip"
     if not rom_path.exists():
         return False, f"ROM not found: {rom_path}"
 
-    if not CONFIG_FILE.exists():
-        return False, f"Config not found: {CONFIG_FILE}"
+    config = get_config_file()
+    if not config.exists():
+        return False, f"Config not found: {config}"
 
     core = MAME_CORE if use_mame else FBNEO_CORE
     if not core.exists():
         return False, f"Core not found: {core}"
 
-    # Build command with game-performance wrapper if available
-    retroarch_cmd = ["retroarch", "--config", str(CONFIG_FILE), "-L", str(core), str(rom_path)]
+    # Build command (add verbose in MiSTer mode for debugging)
+    retroarch_cmd = [get_retroarch_cmd(), "--config", str(config), "-L", str(core), str(rom_path)]
+    if MISTER_MODE:
+        retroarch_cmd.insert(1, "-v")  # Verbose for MiSTer debugging
 
-    if Path(GAME_PERFORMANCE_CMD).exists():
+    # Wrap with game-performance if available (desktop mode only - conflicts with MiSTer)
+    if not MISTER_MODE and Path(GAME_PERFORMANCE_CMD).exists():
         cmd = [GAME_PERFORMANCE_CMD] + retroarch_cmd
     else:
         cmd = retroarch_cmd
 
-    # Run with NVIDIA environment
+    # Show mode indicator
+    mode = "MiSTer CRT" if MISTER_MODE else "Desktop"
+    print(f"Launching [{mode}]: {rom_name}")
+
     subprocess.run(cmd, env=get_launch_env())
     return True, None
 
@@ -391,30 +423,80 @@ def main_menu(stdscr):
 
 
 def launch_rom_directly(rom_path, use_mame=False):
-    """Launch a ROM file directly with NVIDIA GPU and game-performance."""
+    """Launch a ROM file directly."""
+    config = get_config_file()
     core = MAME_CORE if use_mame else FBNEO_CORE
-    retroarch_cmd = ["retroarch", "--config", str(CONFIG_FILE), "-L", str(core), str(rom_path)]
+    retroarch_cmd = [get_retroarch_cmd(), "--config", str(config), "-L", str(core), str(rom_path)]
+    if MISTER_MODE:
+        retroarch_cmd.insert(1, "-v")  # Verbose for MiSTer debugging
 
-    if Path(GAME_PERFORMANCE_CMD).exists():
+    # Skip game-performance in MiSTer mode (conflicts with streaming)
+    if not MISTER_MODE and Path(GAME_PERFORMANCE_CMD).exists():
         cmd = [GAME_PERFORMANCE_CMD] + retroarch_cmd
     else:
         cmd = retroarch_cmd
+
+    mode = "MiSTer CRT" if MISTER_MODE else "Desktop"
+    print(f"Launching [{mode}]: {rom_path.stem}")
 
     subprocess.run(cmd, env=get_launch_env())
 
 
 def main():
     """Entry point."""
-    # Check for command line ROM argument
-    if len(sys.argv) > 1:
-        rom_arg = sys.argv[1]
+    global MISTER_MODE
 
-        # Handle --mame flag
-        use_mame = False
-        if rom_arg == "--mame" and len(sys.argv) > 2:
+    # Parse arguments
+    args = sys.argv[1:]
+    use_mame = False
+    rom_arg = None
+
+    # Process flags
+    while args:
+        if args[0] == "--mister":
+            MISTER_MODE = True
+            args = args[1:]
+        elif args[0] == "--mame":
             use_mame = True
-            rom_arg = sys.argv[2]
+            args = args[1:]
+        elif args[0] == "--menu":
+            # Just open menu
+            break
+        elif args[0] == "--help" or args[0] == "-h":
+            print("ShmupArch Linux - Low-latency shmup launcher")
+            print()
+            print("Usage: shmuparch.py [options] [rom_name]")
+            print()
+            print("Options:")
+            print("  --mister    Stream to MiSTer FPGA (CRT output)")
+            print("  --mame      Use MAME core instead of FBNeo")
+            print("  --menu      Open RetroArch menu directly")
+            print("  --help      Show this help")
+            print()
+            print("Examples:")
+            print("  ./shmuparch.py              # TUI game selector (Desktop)")
+            print("  ./shmuparch.py --mister     # TUI game selector (MiSTer CRT)")
+            print("  ./shmuparch.py bgaregga     # Launch game (Desktop)")
+            print("  ./shmuparch.py --mister ket # Launch game (MiSTer CRT)")
+            return 0
+        else:
+            rom_arg = args[0]
+            args = args[1:]
+            break
 
+    # Show mode
+    if MISTER_MODE:
+        print("ShmupArch [MiSTer CRT Mode] -> 192.168.30.81")
+        if not MISTER_RETROARCH_BIN.exists():
+            print(f"Error: MiSTer RetroArch binary not found: {MISTER_RETROARCH_BIN}")
+            print("Build with: cd ~/src/RetroArch && ./configure --enable-mister && make")
+            return 1
+        if not MISTER_CONFIG_FILE.exists():
+            print(f"Error: MiSTer config not found: {MISTER_CONFIG_FILE}")
+            return 1
+
+    # Handle ROM argument
+    if rom_arg:
         # If it's a path, extract ROM name
         if "/" in rom_arg:
             rom_path = Path(rom_arg)
@@ -433,23 +515,26 @@ def main():
             return 1
 
     # Check dependencies
-    if not CONFIG_FILE.exists():
-        print(f"Error: Config not found: {CONFIG_FILE}")
+    config = get_config_file()
+    if not config.exists():
+        print(f"Error: Config not found: {config}")
         return 1
 
     if not FBNEO_CORE.exists():
         print(f"Error: FBNeo core not found: {FBNEO_CORE}")
         return 1
 
-    # Check if retroarch is installed
-    try:
-        subprocess.run(["which", "retroarch"], capture_output=True, check=True)
-    except subprocess.CalledProcessError:
-        print("Error: RetroArch not found. Install with: sudo pacman -S retroarch")
-        return 1
+    # Check if retroarch is installed (for desktop mode)
+    if not MISTER_MODE:
+        try:
+            subprocess.run(["which", "retroarch"], capture_output=True, check=True)
+        except subprocess.CalledProcessError:
+            print("Error: RetroArch not found. Install with: sudo pacman -S retroarch")
+            return 1
 
     # Launch TUI
-    print("Starting ShmupArch...")
+    mode = "MiSTer CRT" if MISTER_MODE else "Desktop"
+    print(f"Starting ShmupArch [{mode}]...")
     try:
         curses.wrapper(main_menu)
     except KeyboardInterrupt:
