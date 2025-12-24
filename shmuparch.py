@@ -39,6 +39,9 @@ GAME_PERFORMANCE_CMD = "/usr/bin/game-performance"
 GAMES = {
     # === CAVE ===
     "akatana":    ("Akai Katana", "Cave", 1),
+    "deathsml":   ("Deathsmiles", "Cave", 1),
+    "dsmbl":      ("Deathsmiles MegaBlack Label", "Cave", 1),
+    "dfeveron":   ("Dangun Feveron", "Cave", 1),
     "donpachi":   ("DonPachi", "Cave", 1),
     "donpachij":  ("DonPachi (Japan)", "Cave", 1),
     "ddonpach":   ("DoDonPachi", "Cave", 1),
@@ -51,12 +54,18 @@ GAMES = {
     "ddpdfk10":   ("DoDonPachi Dai-Fukkatsu Ver 1.0", "Cave", 1),
     "ddpsdoj":    ("DoDonPachi SaiDaiOuJou", "Cave", 1),
     "espgal":     ("Espgaluda", "Cave", 1),
+    "espgal2":    ("Espgaluda II", "Cave", 1),
     "esprade":    ("ESP Ra.De.", "Cave", 2),
     "futari15":   ("Mushihimesama Futari 1.5", "Cave", 1),
     "guwange":    ("Guwange", "Cave", 2),
+    "ibara":      ("Ibara", "Cave", 1),
+    "ibarablk":   ("Ibara Kuro Black Label", "Cave", 1),
     "ket":        ("Ketsui: Kizuna Jigoku Tachi", "Cave", 1),
     "ketarr":     ("Ketsui Arrange", "Cave", 1),
     "ketarr151":  ("Ketsui Arrange Ver 1.51", "Cave", 1),
+    "mmpork":     ("Muchi Muchi Pork!", "Cave", 1),
+    "mushisam":   ("Mushihimesama", "Cave", 1),
+    "pinkswts":   ("Pink Sweets: Ibara Sorekara", "Cave", 1),
 
     # === TOAPLAN ===
     "batsugun":   ("Batsugun", "Toaplan", 1),
