@@ -129,6 +129,46 @@ GAMES = {
     "cottonj":    ("Cotton: Fantastic Night Dreams (Japan)", "Sega/Success", 1),
     "p47j":       ("P-47: The Phantom Fighter (Japan)", "Jaleco", 2),
     "raiden":     ("Raiden", "Seibu", 1),
+    # === Raizing ===
+    "1944": ("1944: The Loop Master", "Raizing", 1),
+    "batriderc": ("Armed Police Batrider", "Raizing", 1),
+    "bgareggahk": ("Battle Garegga", "Raizing", 1),
+    "bgareggat2": ("Battle Garegga - Type 2 (Europe / USA / Japan / Asia)", "Raizing", 1),
+    "dimahoo": ("Dimahoo", "Raizing", 1),
+    "dimahoou": ("Dimahoo", "Raizing", 1),
+    "gmahou": ("Great Mahou Daisakusen", "Raizing", 1),
+    "kingdmgp": ("Kingdom Grandprix", "Raizing", 1),
+    "mahoudai": ("Mahou Daisakusen", "Raizing", 1),
+    "shippumd": ("Shippu Mahou Daisakusen", "Raizing", 1),
+    "sstriker": ("Sorcer Striker", "Raizing", 1),
+    "sokyugrt": ("Soukyugurentai", "Raizing", 1),
+    # === Atlus ===
+    "plegends": ("Gogetsuji Legends", "Atlus", 1),
+    "naname": ("Naname de Magic!", "Atlus", 1),
+    "ohmygod": ("Oh My God!", "Atlus", 1),
+    "patapata": ("Pata Pata Panic", "Atlus", 1),
+    # === Banpresto ===
+    "dbz": ("Dragon Ball Z", "Banpresto", 1),
+    "dbz2": ("Dragon Ball Z 2 - Super Battle", "Banpresto", 1),
+    "godzilla": ("Godzilla", "Banpresto", 1),
+    "gundhara": ("Gundhara", "Banpresto", 1),
+    "kamenrid": ("Masked Riders Club Battle Race / Kamen Rider Club Battle Racer", "Banpresto", 1),
+    "gundamex": ("Mobile Suit Gundam EX Revue", "Banpresto", 1),
+    "gdfs": ("Mobile Suit Gundam Final Shooting", "Banpresto", 1),
+    "neobattl": ("SD Gundam Neo Battling", "Banpresto", 1),
+    "grainbow": ("SD Gundam Sangokushi Rainbow Tairiku Senki", "Banpresto", 1),
+    "macross": ("Super Spacefortress Macross / Chou-Jikuu Yousai Macross", "Banpresto", 1),
+    "utoukond": ("Ultra Toukon Densetsu", "Banpresto", 1),
+    "umanclub": ("Ultraman Club - Tatakae! Ultraman Kyoudai!!", "Banpresto", 1),
+    # === Capcom ===
+    "bionicc": ("Bionic Commando", "Capcom", 1),
+    "blktiger": ("Black Tiger", "Capcom", 1),
+    "block": ("Block Block", "Capcom", 1),
+    "csclub": ("Capcom Sports Club", "Capcom", 1),
+
+
+
+
 }
 
 # Category display order
@@ -136,6 +176,20 @@ CATEGORY_ORDER = [
     "Cave", "Toaplan", "Raizing", "Psikyo", "Capcom",
     "Irem", "Taito", "SNK", "Konami", "Sega/Success", "Jaleco", "Seibu"
 ]
+
+# Games that require MAME core instead of FBNeo
+# (ST-V, Model 2, and other hardware not supported by FBNeo)
+MAME_GAMES = {
+    # Sega ST-V (Sega Titan Video) - requires stvbios.zip
+    "sokyugrt",     # Soukyugurentai / Terra Diver
+    "rsgun",        # Radiant Silvergun
+    "sss",          # Steep Slope Sliders (not a shmup, but ST-V)
+    "cotton2",      # Cotton 2
+    "cottonbm",     # Cotton Boomerang
+    "elandore",     # Elan Doree
+    "batmanfr",     # Batman Forever
+    # Add more ST-V or unsupported hardware games here
+}
 
 
 def get_games_by_category():
@@ -179,8 +233,13 @@ def get_config_file():
     return CONFIG_FILE
 
 
-def launch_game(rom_name, use_mame=False):
-    """Launch a game with RetroArch."""
+def launch_game(rom_name, use_mame=None):
+    """Launch a game with RetroArch.
+
+    Args:
+        rom_name: ROM filename without extension
+        use_mame: Force MAME core (True), FBNeo (False), or auto-detect (None)
+    """
     rom_path = ROM_DIR / f"{rom_name}.zip"
     if not rom_path.exists():
         return False, f"ROM not found: {rom_path}"
@@ -188,6 +247,10 @@ def launch_game(rom_name, use_mame=False):
     config = get_config_file()
     if not config.exists():
         return False, f"Config not found: {config}"
+
+    # Auto-detect core if not specified
+    if use_mame is None:
+        use_mame = rom_name in MAME_GAMES
 
     core = MAME_CORE if use_mame else FBNEO_CORE
     if not core.exists():
@@ -206,7 +269,8 @@ def launch_game(rom_name, use_mame=False):
 
     # Show mode indicator
     mode = "MiSTer CRT" if MISTER_MODE else "Desktop"
-    print(f"Launching [{mode}]: {rom_name}")
+    core_name = "MAME" if use_mame else "FBNeo"
+    print(f"Launching [{mode}] [{core_name}]: {rom_name}")
 
     subprocess.run(cmd, env=get_launch_env())
     return True, None
@@ -431,9 +495,20 @@ def main_menu(stdscr):
             scroll_offset = selected_idx - menu_height + 1
 
 
-def launch_rom_directly(rom_path, use_mame=False):
-    """Launch a ROM file directly."""
+def launch_rom_directly(rom_path, use_mame=None):
+    """Launch a ROM file directly.
+
+    Args:
+        rom_path: Path to ROM file
+        use_mame: Force MAME core (True), FBNeo (False), or auto-detect (None)
+    """
     config = get_config_file()
+    rom_name = rom_path.stem
+
+    # Auto-detect core if not specified
+    if use_mame is None:
+        use_mame = rom_name in MAME_GAMES
+
     core = MAME_CORE if use_mame else FBNEO_CORE
     retroarch_cmd = [get_retroarch_cmd(), "--config", str(config), "-L", str(core), str(rom_path)]
     if MISTER_MODE:
@@ -446,7 +521,8 @@ def launch_rom_directly(rom_path, use_mame=False):
         cmd = retroarch_cmd
 
     mode = "MiSTer CRT" if MISTER_MODE else "Desktop"
-    print(f"Launching [{mode}]: {rom_path.stem}")
+    core_name = "MAME" if use_mame else "FBNeo"
+    print(f"Launching [{mode}] [{core_name}]: {rom_name}")
 
     subprocess.run(cmd, env=get_launch_env())
 
