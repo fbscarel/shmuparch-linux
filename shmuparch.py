@@ -38,102 +38,97 @@ GAME_PERFORMANCE_CMD = "/usr/bin/game-performance"
 # Game database: rom_name -> (pretty_name, category, run_ahead_frames)
 GAMES = {
     # === CAVE ===
-    "akatana":    ("Akai Katana", "Cave", 1),
-    "deathsml":   ("Deathsmiles", "Cave", 1),
-    "dsmbl":      ("Deathsmiles MegaBlack Label", "Cave", 1),
-    "dfeveron":   ("Dangun Feveron", "Cave", 1),
-    "donpachi":   ("DonPachi", "Cave", 1),
-    "donpachij":  ("DonPachi (Japan)", "Cave", 1),
-    "ddonpach":   ("DoDonPachi", "Cave", 1),
-    "ddp2":       ("DoDonPachi II: Bee Storm", "Cave", 1),
-    "ddp3":       ("DoDonPachi Dai-Ou-Jou", "Cave", 1),
-    "ddpdoj":     ("DoDonPachi Dai-Ou-Jou", "Cave", 1),
-    "ddpdojblk":  ("DoDonPachi Dai-Ou-Jou Black Label", "Cave", 1),
-    "ddpdojp":    ("DoDonPachi Dai-Ou-Jou (Prototype)", "Cave", 1),
-    "ddpdfk":     ("DoDonPachi Dai-Fukkatsu", "Cave", 1),
-    "ddpdfk10":   ("DoDonPachi Dai-Fukkatsu Ver 1.0", "Cave", 1),
-    "ddpsdoj":    ("DoDonPachi SaiDaiOuJou", "Cave", 1),
-    "espgal":     ("Espgaluda", "Cave", 1),
-    "espgal2":    ("Espgaluda II", "Cave", 1),
-    "esprade":    ("ESP Ra.De.", "Cave", 2),
-    "futari15":   ("Mushihimesama Futari 1.5", "Cave", 1),
-    "guwange":    ("Guwange", "Cave", 2),
-    "ibara":      ("Ibara", "Cave", 1),
-    "ibarablk":   ("Ibara Kuro Black Label", "Cave", 1),
-    "ket":        ("Ketsui: Kizuna Jigoku Tachi", "Cave", 1),
-    "ketarr":     ("Ketsui Arrange", "Cave", 1),
-    "ketarr151":  ("Ketsui Arrange Ver 1.51", "Cave", 1),
-    "mmpork":     ("Muchi Muchi Pork!", "Cave", 1),
-    "mushisam":   ("Mushihimesama", "Cave", 1),
-    "pinkswts":   ("Pink Sweets: Ibara Sorekara", "Cave", 1),
-
+    "akatana": ("Akai Katana", "Cave", 1),
+    "deathsml": ("Deathsmiles", "Cave", 1),
+    "dsmbl": ("Deathsmiles MegaBlack Label", "Cave", 1),
+    "dfeveron": ("Dangun Feveron", "Cave", 1),
+    "donpachi": ("DonPachi", "Cave", 1),
+    "donpachij": ("DonPachi (Japan)", "Cave", 1),
+    "ddonpach": ("DoDonPachi", "Cave", 1),
+    "ddp2": ("DoDonPachi II: Bee Storm", "Cave", 1),
+    "ddp3": ("DoDonPachi Dai-Ou-Jou", "Cave", 1),
+    "ddpdoj": ("DoDonPachi Dai-Ou-Jou", "Cave", 1),
+    "ddpdojblk": ("DoDonPachi Dai-Ou-Jou Black Label", "Cave", 1),
+    "ddpdojp": ("DoDonPachi Dai-Ou-Jou (Prototype)", "Cave", 1),
+    "ddpdfk": ("DoDonPachi Dai-Fukkatsu", "Cave", 1),
+    "ddpdfk10": ("DoDonPachi Dai-Fukkatsu Ver 1.0", "Cave", 1),
+    "ddpsdoj": ("DoDonPachi SaiDaiOuJou", "Cave", 1),
+    "espgal": ("Espgaluda", "Cave", 1),
+    "espgal2": ("Espgaluda II", "Cave", 1),
+    "esprade": ("ESP Ra.De.", "Cave", 2),
+    "futari15": ("Mushihimesama Futari 1.5", "Cave", 1),
+    "guwange": ("Guwange", "Cave", 2),
+    "ibara": ("Ibara", "Cave", 1),
+    "ibarablk": ("Ibara Kuro Black Label", "Cave", 1),
+    "ket": ("Ketsui: Kizuna Jigoku Tachi", "Cave", 1),
+    "ketarr": ("Ketsui Arrange", "Cave", 1),
+    "ketarr151": ("Ketsui Arrange Ver 1.51", "Cave", 1),
+    "mmpork": ("Muchi Muchi Pork!", "Cave", 1),
+    "mushisam": ("Mushihimesama", "Cave", 1),
+    "pinkswts": ("Pink Sweets: Ibara Sorekara", "Cave", 1),
     # === TOAPLAN ===
-    "batsugun":   ("Batsugun", "Toaplan", 1),
-    "fireshrk":   ("Fire Shark (Same! Same! Same!)", "Toaplan", 1),
-    "truxton":    ("Truxton (Tatsujin)", "Toaplan", 1),
-
+    "batsugun": ("Batsugun", "Toaplan", 1),
+    "fireshrk": ("Fire Shark (Same! Same! Same!)", "Toaplan", 1),
+    "truxton": ("Truxton (Tatsujin)", "Toaplan", 1),
     # === RAIZING / 8ING ===
-    "batrider":   ("Armed Police Batrider", "Raizing", 3),
-    "batriderj":  ("Armed Police Batrider (Japan)", "Raizing", 3),
-    "bbakraidj":  ("Battle Bakraid (Japan)", "Raizing", 3),
-    "bgaregga":   ("Battle Garegga", "Raizing", 3),
-
+    "batrider": ("Armed Police Batrider", "Raizing", 3),
+    "batriderj": ("Armed Police Batrider (Japan)", "Raizing", 3),
+    "bbakraidj": ("Battle Bakraid (Japan)", "Raizing", 3),
+    "bgaregga": ("Battle Garegga", "Raizing", 3),
     # === PSIKYO ===
-    "gunbird":    ("Gunbird", "Psikyo", 4),
-    "gunbird2":   ("Gunbird 2", "Psikyo", 4),
-    "gunbirdj":   ("Gunbird (Japan)", "Psikyo", 4),
-    "s1945":      ("Strikers 1945", "Psikyo", 4),
-    "s1945ii":    ("Strikers 1945 II", "Psikyo", 1),
-    "s1945j":     ("Strikers 1945 (Japan)", "Psikyo", 4),
-    "1945kiii":   ("Strikers 1945 III", "Psikyo", 1),
-
+    "gunbird": ("Gunbird", "Psikyo", 4),
+    "gunbird2": ("Gunbird 2", "Psikyo", 4),
+    "gunbirdj": ("Gunbird (Japan)", "Psikyo", 4),
+    "s1945": ("Strikers 1945", "Psikyo", 4),
+    "s1945ii": ("Strikers 1945 II", "Psikyo", 1),
+    "s1945j": ("Strikers 1945 (Japan)", "Psikyo", 4),
+    "1945kiii": ("Strikers 1945 III", "Psikyo", 1),
     # === CAPCOM ===
-    "1941j":      ("1941: Counter Attack (Japan)", "Capcom", 3),
-    "1942":       ("1942", "Capcom", 1),
-    "1943j":      ("1943: The Battle of Midway (Japan)", "Capcom", 1),
-    "gigawing":   ("Giga Wing", "Capcom", 3),
-    "gigawingj":  ("Giga Wing (Japan)", "Capcom", 3),
-    "progear":    ("Progear", "Capcom", 3),
-    "progearj":   ("Progear (Japan)", "Capcom", 3),
-    "mmatrix":    ("Mars Matrix", "Capcom", 4),
-    "mmatrixj":   ("Mars Matrix (Japan)", "Capcom", 4),
-
+    "1941j": ("1941: Counter Attack (Japan)", "Capcom", 3),
+    "1942": ("1942", "Capcom", 1),
+    "1943j": ("1943: The Battle of Midway (Japan)", "Capcom", 1),
+    "gigawing": ("Giga Wing", "Capcom", 3),
+    "gigawingj": ("Giga Wing (Japan)", "Capcom", 3),
+    "progear": ("Progear", "Capcom", 3),
+    "progearj": ("Progear (Japan)", "Capcom", 3),
+    "mmatrix": ("Mars Matrix", "Capcom", 4),
+    "mmatrixj": ("Mars Matrix (Japan)", "Capcom", 4),
     # === IREM ===
-    "rtype":      ("R-Type", "Irem", 2),
-    "rtype2":     ("R-Type II", "Irem", 2),
-    "rtypeleo":   ("R-Type Leo", "Irem", 3),
-    "rtypeleoj":  ("R-Type Leo (Japan)", "Irem", 3),
-
+    "rtype": ("R-Type", "Irem", 2),
+    "rtype2": ("R-Type II", "Irem", 2),
+    "rtypeleo": ("R-Type Leo", "Irem", 3),
+    "rtypeleoj": ("R-Type Leo (Japan)", "Irem", 3),
     # === TAITO ===
-    "darius":     ("Darius", "Taito", 1),
-    "dariusgx":   ("Darius Gaiden Extra", "Taito", 1),
-    "metalb":     ("Metal Black", "Taito", 2),
-    "metalbj":    ("Metal Black (Japan)", "Taito", 2),
-    "rayforce":   ("Rayforce (Gunlock)", "Taito", 2),
-    "rayforcej":  ("Rayforce (Japan)", "Taito", 2),
-
+    "darius": ("Darius", "Taito", 1),
+    "dariusgx": ("Darius Gaiden Extra", "Taito", 1),
+    "metalb": ("Metal Black", "Taito", 2),
+    "metalbj": ("Metal Black (Japan)", "Taito", 2),
+    "rayforce": ("Rayforce (Gunlock)", "Taito", 2),
+    "rayforcej": ("Rayforce (Japan)", "Taito", 2),
     # === SNK / NEO GEO ===
-    "blazstar":   ("Blazing Star", "SNK", 2),
-    "mslug":      ("Metal Slug", "SNK", 4),
-    "mslug2":     ("Metal Slug 2", "SNK", 3),
-    "mslug3":     ("Metal Slug 3", "SNK", 2),
-    "mslug4":     ("Metal Slug 4", "SNK", 2),
-    "mslug5":     ("Metal Slug 5", "SNK", 2),
-    "mslugx":     ("Metal Slug X", "SNK", 3),
-
+    "blazstar": ("Blazing Star", "SNK", 2),
+    "mslug": ("Metal Slug", "SNK", 4),
+    "mslug2": ("Metal Slug 2", "SNK", 3),
+    "mslug3": ("Metal Slug 3", "SNK", 2),
+    "mslug4": ("Metal Slug 4", "SNK", 2),
+    "mslug5": ("Metal Slug 5", "SNK", 2),
+    "mslugx": ("Metal Slug X", "SNK", 3),
     # === KONAMI ===
-    "gradius":    ("Gradius", "Konami", 1),
-    "gradius2":   ("Gradius II: Gofer no Yabou", "Konami", 1),
-
+    "gradius": ("Gradius", "Konami", 1),
+    "gradius2": ("Gradius II: Gofer no Yabou", "Konami", 1),
     # === OTHER ===
-    "cottonj":    ("Cotton: Fantastic Night Dreams (Japan)", "Sega/Success", 1),
-    "p47j":       ("P-47: The Phantom Fighter (Japan)", "Jaleco", 2),
-    "raiden":     ("Raiden", "Seibu", 1),
+    "cottonj": ("Cotton: Fantastic Night Dreams (Japan)", "Sega/Success", 1),
+    "p47j": ("P-47: The Phantom Fighter (Japan)", "Jaleco", 2),
+    "raiden": ("Raiden", "Seibu", 1),
     # === Raizing ===
     "1944": ("1944: The Loop Master", "Raizing", 1),
     "batriderc": ("Armed Police Batrider", "Raizing", 1),
     "bgareggahk": ("Battle Garegga", "Raizing", 1),
-    "bgareggat2": ("Battle Garegga - Type 2 (Europe / USA / Japan / Asia)", "Raizing", 1),
+    "bgareggat2": (
+        "Battle Garegga - Type 2 (Europe / USA / Japan / Asia)",
+        "Raizing",
+        1,
+    ),
     "dimahoo": ("Dimahoo", "Raizing", 1),
     "dimahoou": ("Dimahoo", "Raizing", 1),
     "gmahou": ("Great Mahou Daisakusen", "Raizing", 1),
@@ -142,52 +137,35 @@ GAMES = {
     "shippumd": ("Shippu Mahou Daisakusen", "Raizing", 1),
     "sstriker": ("Sorcer Striker", "Raizing", 1),
     "sokyugrt": ("Soukyugurentai", "Raizing", 1),
-    # === Atlus ===
-    "plegends": ("Gogetsuji Legends", "Atlus", 1),
-    "naname": ("Naname de Magic!", "Atlus", 1),
-    "ohmygod": ("Oh My God!", "Atlus", 1),
-    "patapata": ("Pata Pata Panic", "Atlus", 1),
-    # === Banpresto ===
-    "dbz": ("Dragon Ball Z", "Banpresto", 1),
-    "dbz2": ("Dragon Ball Z 2 - Super Battle", "Banpresto", 1),
-    "godzilla": ("Godzilla", "Banpresto", 1),
-    "gundhara": ("Gundhara", "Banpresto", 1),
-    "kamenrid": ("Masked Riders Club Battle Race / Kamen Rider Club Battle Racer", "Banpresto", 1),
-    "gundamex": ("Mobile Suit Gundam EX Revue", "Banpresto", 1),
-    "gdfs": ("Mobile Suit Gundam Final Shooting", "Banpresto", 1),
-    "neobattl": ("SD Gundam Neo Battling", "Banpresto", 1),
-    "grainbow": ("SD Gundam Sangokushi Rainbow Tairiku Senki", "Banpresto", 1),
-    "macross": ("Super Spacefortress Macross / Chou-Jikuu Yousai Macross", "Banpresto", 1),
-    "utoukond": ("Ultra Toukon Densetsu", "Banpresto", 1),
-    "umanclub": ("Ultraman Club - Tatakae! Ultraman Kyoudai!!", "Banpresto", 1),
-    # === Capcom ===
-    "bionicc": ("Bionic Commando", "Capcom", 1),
-    "blktiger": ("Black Tiger", "Capcom", 1),
-    "block": ("Block Block", "Capcom", 1),
-    "csclub": ("Capcom Sports Club", "Capcom", 1),
-
-
-
-
 }
 
 # Category display order
 CATEGORY_ORDER = [
-    "Cave", "Toaplan", "Raizing", "Psikyo", "Capcom",
-    "Irem", "Taito", "SNK", "Konami", "Sega/Success", "Jaleco", "Seibu"
+    "Cave",
+    "Toaplan",
+    "Raizing",
+    "Psikyo",
+    "Capcom",
+    "Irem",
+    "Taito",
+    "SNK",
+    "Konami",
+    "Sega/Success",
+    "Jaleco",
+    "Seibu",
 ]
 
 # Games that require MAME core instead of FBNeo
 # (ST-V, Model 2, and other hardware not supported by FBNeo)
 MAME_GAMES = {
     # Sega ST-V (Sega Titan Video) - requires stvbios.zip
-    "sokyugrt",     # Soukyugurentai / Terra Diver
-    "rsgun",        # Radiant Silvergun
-    "sss",          # Steep Slope Sliders (not a shmup, but ST-V)
-    "cotton2",      # Cotton 2
-    "cottonbm",     # Cotton Boomerang
-    "elandore",     # Elan Doree
-    "batmanfr",     # Batman Forever
+    "sokyugrt",  # Soukyugurentai / Terra Diver
+    "rsgun",  # Radiant Silvergun
+    "sss",  # Steep Slope Sliders (not a shmup, but ST-V)
+    "cotton2",  # Cotton 2
+    "cottonbm",  # Cotton Boomerang
+    "elandore",  # Elan Doree
+    "batmanfr",  # Batman Forever
     # Add more ST-V or unsupported hardware games here
 }
 
@@ -257,7 +235,14 @@ def launch_game(rom_name, use_mame=None):
         return False, f"Core not found: {core}"
 
     # Build command (add verbose in MiSTer mode for debugging)
-    retroarch_cmd = [get_retroarch_cmd(), "--config", str(config), "-L", str(core), str(rom_path)]
+    retroarch_cmd = [
+        get_retroarch_cmd(),
+        "--config",
+        str(config),
+        "-L",
+        str(core),
+        str(rom_path),
+    ]
     if MISTER_MODE:
         retroarch_cmd.insert(1, "-v")  # Verbose for MiSTer debugging
 
@@ -290,8 +275,11 @@ def draw_menu(stdscr, games_by_cat, selected_idx, scroll_offset, filter_text="")
 
         # Filter games if filter text is set
         if filter_text:
-            filtered = [(r, n, f) for r, n, f in cat_games
-                       if filter_text.lower() in n.lower() or filter_text.lower() in r.lower()]
+            filtered = [
+                (r, n, f)
+                for r, n, f in cat_games
+                if filter_text.lower() in n.lower() or filter_text.lower() in r.lower()
+            ]
             if not filtered:
                 continue
             cat_games = filtered
@@ -328,7 +316,9 @@ def draw_menu(stdscr, games_by_cat, selected_idx, scroll_offset, filter_text="")
         scroll_offset = selected_idx - menu_height + 1
 
     # Draw items
-    for i, (item_type, *data) in enumerate(items[scroll_offset:scroll_offset + menu_height]):
+    for i, (item_type, *data) in enumerate(
+        items[scroll_offset : scroll_offset + menu_height]
+    ):
         y = menu_start + i
         if y >= height - 2:
             break
@@ -340,7 +330,7 @@ def draw_menu(stdscr, games_by_cat, selected_idx, scroll_offset, filter_text="")
             cat_name = data[0]
             # Category header
             stdscr.attron(curses.color_pair(2) | curses.A_BOLD)
-            stdscr.addstr(y, 2, f"━━━ {cat_name} ━━━"[:width-4])
+            stdscr.addstr(y, 2, f"━━━ {cat_name} ━━━"[: width - 4])
             stdscr.attroff(curses.color_pair(2) | curses.A_BOLD)
         else:
             rom, name, frames = data
@@ -354,7 +344,7 @@ def draw_menu(stdscr, games_by_cat, selected_idx, scroll_offset, filter_text="")
 
             # Truncate if needed
             if len(display) > width - 4:
-                display = display[:width-7] + "..."
+                display = display[: width - 7] + "..."
 
             # Choose style
             if is_selected:
@@ -362,7 +352,7 @@ def draw_menu(stdscr, games_by_cat, selected_idx, scroll_offset, filter_text="")
                     stdscr.attron(curses.color_pair(1) | curses.A_BOLD)
                 else:
                     stdscr.attron(curses.color_pair(4) | curses.A_BOLD)
-                stdscr.addstr(y, 2, display.ljust(width-4))
+                stdscr.addstr(y, 2, display.ljust(width - 4))
                 stdscr.attroff(curses.color_pair(1) | curses.A_BOLD)
                 stdscr.attroff(curses.color_pair(4) | curses.A_BOLD)
             elif not rom_exists:
@@ -376,7 +366,7 @@ def draw_menu(stdscr, games_by_cat, selected_idx, scroll_offset, filter_text="")
         if item[0] == "game":
             rom = item[1]
             footer = f" ROM: {rom}.zip | Dir: {ROM_DIR} "
-            stdscr.addstr(height-1, 2, footer[:width-4], curses.A_DIM)
+            stdscr.addstr(height - 1, 2, footer[: width - 4], curses.A_DIM)
 
     stdscr.refresh()
     return items
@@ -387,10 +377,10 @@ def main_menu(stdscr):
     # Setup colors
     curses.start_color()
     curses.use_default_colors()
-    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_CYAN)    # Selected
-    curses.init_pair(2, curses.COLOR_YELLOW, -1)                   # Category
-    curses.init_pair(3, curses.COLOR_GREEN, -1)                    # Filter
-    curses.init_pair(4, curses.COLOR_RED, -1)                      # Missing ROM
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_CYAN)  # Selected
+    curses.init_pair(2, curses.COLOR_YELLOW, -1)  # Category
+    curses.init_pair(3, curses.COLOR_GREEN, -1)  # Filter
+    curses.init_pair(4, curses.COLOR_RED, -1)  # Missing ROM
 
     curses.curs_set(0)  # Hide cursor
     stdscr.keypad(True)
@@ -401,11 +391,13 @@ def main_menu(stdscr):
     filter_text = ""
 
     while True:
-        items = draw_menu(stdscr, games_by_cat, selected_idx, scroll_offset, filter_text)
+        items = draw_menu(
+            stdscr, games_by_cat, selected_idx, scroll_offset, filter_text
+        )
 
         if not items:
             key = stdscr.getch()
-            if key == 27 or key == ord('q') or key == ord('Q'):  # Escape or Q
+            if key == 27 or key == ord("q") or key == ord("Q"):  # Escape or Q
                 break
             elif key == curses.KEY_BACKSPACE or key == 127 or key == 8:
                 filter_text = filter_text[:-1]
@@ -413,13 +405,13 @@ def main_menu(stdscr):
 
         key = stdscr.getch()
 
-        if key == 27 or key == ord('q') or key == ord('Q'):  # Escape or Q
+        if key == 27 or key == ord("q") or key == ord("Q"):  # Escape or Q
             if filter_text:
                 filter_text = ""
             else:
                 break
 
-        elif key == curses.KEY_UP or key == ord('k'):
+        elif key == curses.KEY_UP or key == ord("k"):
             # Move up, skip categories
             new_idx = selected_idx - 1
             while new_idx >= 0 and items[new_idx][0] == "category":
@@ -427,7 +419,7 @@ def main_menu(stdscr):
             if new_idx >= 0:
                 selected_idx = new_idx
 
-        elif key == curses.KEY_DOWN or key == ord('j'):
+        elif key == curses.KEY_DOWN or key == ord("j"):
             # Move down, skip categories
             new_idx = selected_idx + 1
             while new_idx < len(items) and items[new_idx][0] == "category":
@@ -442,7 +434,9 @@ def main_menu(stdscr):
 
         elif key == curses.KEY_NPAGE:  # Page Down
             selected_idx = min(len(items) - 1, selected_idx + 10)
-            while selected_idx < len(items) - 1 and items[selected_idx][0] == "category":
+            while (
+                selected_idx < len(items) - 1 and items[selected_idx][0] == "category"
+            ):
                 selected_idx += 1
 
         elif key == curses.KEY_HOME:
@@ -455,7 +449,7 @@ def main_menu(stdscr):
             while selected_idx > 0 and items[selected_idx][0] == "category":
                 selected_idx -= 1
 
-        elif key == ord('\n') or key == curses.KEY_ENTER:
+        elif key == ord("\n") or key == curses.KEY_ENTER:
             if items[selected_idx][0] == "game":
                 rom = items[selected_idx][1]
                 if check_rom_exists(rom):
@@ -510,7 +504,14 @@ def launch_rom_directly(rom_path, use_mame=None):
         use_mame = rom_name in MAME_GAMES
 
     core = MAME_CORE if use_mame else FBNEO_CORE
-    retroarch_cmd = [get_retroarch_cmd(), "--config", str(config), "-L", str(core), str(rom_path)]
+    retroarch_cmd = [
+        get_retroarch_cmd(),
+        "--config",
+        str(config),
+        "-L",
+        str(core),
+        str(rom_path),
+    ]
     if MISTER_MODE:
         retroarch_cmd.insert(1, "-v")  # Verbose for MiSTer debugging
 
@@ -574,7 +575,9 @@ def main():
         print("ShmupArch [MiSTer CRT Mode] -> 192.168.30.81")
         if not MISTER_RETROARCH_BIN.exists():
             print(f"Error: MiSTer RetroArch binary not found: {MISTER_RETROARCH_BIN}")
-            print("Build with: cd ~/src/RetroArch && ./configure --enable-mister && make")
+            print(
+                "Build with: cd ~/src/RetroArch && ./configure --enable-mister && make"
+            )
             return 1
         if not MISTER_CONFIG_FILE.exists():
             print(f"Error: MiSTer config not found: {MISTER_CONFIG_FILE}")
