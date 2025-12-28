@@ -87,6 +87,9 @@ class Game:
     difficulty_jp: Optional[int] = None
     goal_jp: str = ""                      # Goal for JP rating (e.g., "2-ALL")
 
+    # Clear time (1-ALL in minutes, typical non-speedrun pace)
+    clear_time_1all: Optional[int] = None  # Minutes to clear first loop
+
     # Variants (different versions with potentially different difficulties)
     versions: list[GameVersion] = field(default_factory=list)
 
@@ -124,6 +127,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=6, difficulty_1cc=4, routing=Routing.LOW,
     difficulty_jp=16, goal_jp="1-ALL",
+    clear_time_1all=18,
     versions=[
         GameVersion("donpachi", "USA"),
         GameVersion("donpachij", "Japan"),
@@ -142,6 +146,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=7, difficulty_1cc=6, routing=Routing.LOW,
     difficulty_jp=17, goal_jp="1-ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("ddonpach", "World"),
         GameVersion("ddonpachj", "Japan"),
@@ -158,6 +163,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=9, difficulty_1cc=10, routing=Routing.HIGH,
     difficulty_jp=22, goal_jp="1-ALL",
+    clear_time_1all=23,
     versions=[
         GameVersion("ddpdoj", "Master Ver", difficulty_jp=22, goal="1-ALL"),
         GameVersion("ddpdoja", "Master Ver A"),
@@ -180,6 +186,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=5, difficulty_1cc=4, routing=Routing.LOW,
     difficulty_jp=12, goal_jp="1-ALL Strong",
+    clear_time_1all=24,
     versions=[
         GameVersion("ddpdfk", "Ver 1.5", difficulty_jp=23, goal="2-ALL Omote Strong"),
         GameVersion("ddpdfk10", "Ver 1.0"),
@@ -197,6 +204,7 @@ _add(Game(
     rom_name="ddpsdoj",
     orientation=Orientation.TATE,
     difficulty_jp=31, goal_jp="ALL via Hibachi",
+    clear_time_1all=24,
     versions=[
         GameVersion("ddpsdoj", "Master Ver", difficulty_jp=31, goal="ALL via Hibachi"),
         GameVersion("sdojak", "Arrange"),
@@ -214,6 +222,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=2,
     difficulty_jp=20, goal_jp="ALL",
+    clear_time_1all=15,
     versions=[
         GameVersion("esprade", "International"),
         GameVersion("espradej", "Japan Master"),
@@ -231,6 +240,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=2,
     difficulty_jp=20, goal_jp="ALL",
+    clear_time_1all=18,
     versions=[
         GameVersion("guwange", "Master Ver"),
         GameVersion("guwangea", "Older Ver"),
@@ -245,6 +255,7 @@ _add(Game(
     rom_name="dfeveron",
     orientation=Orientation.TATE,
     difficulty_jp=30, goal_jp="ALL via TLB",
+    clear_time_1all=18,
     versions=[
         GameVersion("dfeveron", "Japan"),
         GameVersion("feversos", "Fever SOS (World)"),
@@ -262,6 +273,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=8, difficulty_1cc=6, routing=Routing.MED,
     difficulty_jp=16, goal_jp="ALL",
+    clear_time_1all=18,
     versions=[
         GameVersion("espgal", "Master Ver"),
         GameVersion("espgala", "Older Ver A"),
@@ -277,6 +289,7 @@ _add(Game(
     rom_name="espgal2",
     orientation=Orientation.TATE,
     difficulty_jp=22, goal_jp="ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("espgal2", "Master Ver"),
         GameVersion("espgal2a", "Older A"),
@@ -294,6 +307,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=10, difficulty_1cc=5, routing=Routing.LOW,
     difficulty_jp=15, goal_jp="Original",
+    clear_time_1all=18,
     versions=[
         GameVersion("mushisam", "Master Ver", difficulty_jp=15, goal="Original"),
         GameVersion("mushisama", "Older A"),
@@ -311,6 +325,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=10, difficulty_1cc=8, routing=Routing.LOW,
     difficulty_jp=16, goal_jp="Original 1.5",
+    clear_time_1all=20,
     versions=[
         GameVersion("futari10", "Ver 1.0"),
         GameVersion("futari15", "Ver 1.5", difficulty_jp=16, goal="Original"),
@@ -329,6 +344,7 @@ _add(Game(
     rom_name="ibara",
     orientation=Orientation.TATE,
     difficulty_jp=24, goal_jp="ALL",
+    clear_time_1all=26,
     versions=[
         GameVersion("ibara", "Master Ver"),
         GameVersion("ibarao", "Older"),
@@ -346,6 +362,7 @@ _add(Game(
     rom_name="pinkswts",
     orientation=Orientation.TATE,
     difficulty_jp=15, goal_jp="ALL",
+    clear_time_1all=23,
     versions=[
         GameVersion("pinkswts", "Master Ver"),
         GameVersion("pinkswtsa", "Older A"),
@@ -375,6 +392,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     quality=8, difficulty_1cc=5, routing=Routing.LOW,
     difficulty_jp=9, goal_jp="No Canyon",
+    clear_time_1all=18,
     versions=[
         GameVersion("deathsml", "Master Ver", difficulty_jp=9, goal="No Canyon"),
     ],
@@ -390,6 +408,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     quality=8, difficulty_1cc=5, routing=Routing.LOW,
     difficulty_jp=37, goal_jp="LV999",
+    clear_time_1all=20,
     notes="+2 for Canyon; +4 for TLB (JP index)",
 ))
 
@@ -401,6 +420,7 @@ _add(Game(
     rom_name="akatana",
     orientation=Orientation.YOKO,
     quality=9, difficulty_1cc=6, routing=Routing.LOW,
+    clear_time_1all=20,
     difficulty_jp=13, goal_jp="ALL",
 ))
 
@@ -412,6 +432,7 @@ _add(Game(
     rom_name="ket",
     orientation=Orientation.TATE,
     difficulty_jp=21, goal_jp="1-ALL Tiger",
+    clear_time_1all=20,
     versions=[
         GameVersion("ket", "Master Ver", difficulty_jp=21, goal="1-ALL Tiger"),
         GameVersion("keta", "Older A"),
@@ -431,6 +452,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     runahead_frames=3,
     difficulty_jp=18, goal_jp="1-ALL",
+    clear_time_1all=25,
     versions=[
         GameVersion("progear", "USA"),
         GameVersion("progeara", "Asia"),
@@ -453,6 +475,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=8, difficulty_1cc=7, routing=Routing.MED,
     difficulty_jp=12, goal_jp="ALL",
+    clear_time_1all=18,
     versions=[
         GameVersion("batsugun", "World"),
         GameVersion("batsugunj", "Japan"),
@@ -469,6 +492,7 @@ _add(Game(
     rom_name="truxton",
     orientation=Orientation.TATE,
     difficulty_jp=20, goal_jp="1-ALL",
+    clear_time_1all=22,
     versions=[
         GameVersion("truxton", "World"),
         GameVersion("tatsujn", "Tatsujin Japan"),
@@ -496,6 +520,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=6, difficulty_1cc=1, routing=Routing.LOW,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("fireshrk", "Fire Shark"),
         GameVersion("samesame", "Same! Same! Same!"),
@@ -512,6 +537,7 @@ _add(Game(
     rom_name="vimana",
     orientation=Orientation.TATE,
     difficulty_jp=3, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="+2 without autofire (JP index)",
 ))
 
@@ -523,6 +549,7 @@ _add(Game(
     rom_name="dogyuun",
     orientation=Orientation.TATE,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="-2 with autofire (JP index)",
 ))
 
@@ -534,6 +561,7 @@ _add(Game(
     rom_name="zerowing",
     orientation=Orientation.YOKO,
     difficulty_jp=15, goal_jp="1-ALL",
+    clear_time_1all=28,
     notes="+4 no autofire; +7 for 2-ALL; +30 for 3-ALL+ (JP index)",
 ))
 
@@ -564,6 +592,7 @@ _add(Game(
     rom_name="fshark",
     orientation=Orientation.TATE,
     difficulty_jp=16, goal_jp="1-ALL",
+    clear_time_1all=18,
     versions=[
         GameVersion("fshark", "Flying Shark World"),
         GameVersion("fsharkj", "Hishouzame Japan"),
@@ -593,6 +622,7 @@ _add(Game(
     rom_name="grindstm",
     orientation=Orientation.TATE,
     difficulty_jp=32, goal_jp="2-ALL",
+    clear_time_1all=25,
     versions=[
         GameVersion("grindstm", "Grind Stormer World"),
         GameVersion("vfive", "V-Five Japan"),
@@ -624,14 +654,16 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=3,
     difficulty_jp=26, goal_jp="1-loop with Golden Bat",
+    clear_time_1all=30,
     versions=[
-        GameVersion("bgaregga", "Europe/USA/Japan/Asia"),
+        GameVersion("bgaregga", "Europe/USA/Japan/Asia", notes="Vanilla unpatched"),
+        GameVersion("bgareggaz", "Zakk QoL patch (Sept 2019)", notes="Rank display (Stage Edit DIP), no rank carryover, guest ships unlocked, quick reset (Start+ABC), scoreboard fix"),
         GameVersion("bgareggat2", "Type 2"),
         GameVersion("bgareggahk", "Hong Kong"),
         GameVersion("bgaregganv", "New Version"),
         GameVersion("bgareggacn", "China"),
     ],
-    notes="Harder (extended)=35, +1 for extended two-loop (JP index)",
+    notes="bgareggaz adds QoL features. Harder (extended)=35, +1 for extended two-loop (JP index)",
 ))
 
 _add(Game(
@@ -644,6 +676,7 @@ _add(Game(
     runahead_frames=3,
     quality=8, difficulty_1cc=6, routing=Routing.LOW,
     difficulty_jp=25, goal_jp="Advanced course",
+    clear_time_1all=28,
     versions=[
         GameVersion("batrider", "Europe"),
         GameVersion("batriderj", "Japan"),
@@ -663,6 +696,7 @@ _add(Game(
     runahead_frames=3,
     quality=8, difficulty_1cc=6, routing=Routing.LOW,
     difficulty_jp=22, goal_jp="Advanced course",
+    clear_time_1all=26,
     versions=[
         GameVersion("bbakraid", "Unlimited USA"),
         GameVersion("bbakraidj", "Unlimited Japan"),
@@ -680,6 +714,7 @@ _add(Game(
     rom_name="mahoudai",
     orientation=Orientation.TATE,
     difficulty_jp=18, goal_jp="1-ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("mahoudai", "Japan"),
         GameVersion("sstriker", "Sorcer Striker World"),
@@ -696,6 +731,7 @@ _add(Game(
     rom_name="shippumd",
     orientation=Orientation.TATE,
     difficulty_jp=14, goal_jp="1-ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("shippumd", "Japan"),
         GameVersion("kingdmgp", "Kingdom Grandprix"),
@@ -712,6 +748,7 @@ _add(Game(
     rom_name="gmahou",
     orientation=Orientation.TATE,
     difficulty_jp=23, goal_jp="1-loop with Birthday",
+    clear_time_1all=25,
     versions=[
         GameVersion("gmahou", "Japan"),
         GameVersion("dimahoo", "Dimahoo Europe"),
@@ -729,6 +766,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,
     difficulty_jp=25, goal_jp="ALL",
+    clear_time_1all=22,
     aliases=["Terra Diver"],
     notes="with Toryu; ST-V hardware",
 ))
@@ -741,6 +779,7 @@ _add(Game(
     rom_name="1944",
     orientation=Orientation.YOKO,
     difficulty_jp=27, goal_jp="1-loop mode",
+    clear_time_1all=22,
     versions=[
         GameVersion("1944", "Europe"),
         GameVersion("1944j", "Japan"),
@@ -762,6 +801,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=4,
     difficulty_jp=17, goal_jp="1-ALL",
+    clear_time_1all=11,
     versions=[
         GameVersion("gunbird", "World"),
         GameVersion("gunbirdj", "Japan"),
@@ -779,6 +819,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=4,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=13,
     notes="2-ALL=39 (JP index)",
 ))
 
@@ -791,6 +832,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=4,
     difficulty_jp=20, goal_jp="1-ALL",
+    clear_time_1all=10,
     versions=[
         GameVersion("s1945", "World"),
         GameVersion("s1945j", "Japan"),
@@ -807,6 +849,7 @@ _add(Game(
     rom_name="s1945ii",
     orientation=Orientation.TATE,
     difficulty_jp=21, goal_jp="1-ALL Hayate",
+    clear_time_1all=10,
     notes="2-ALL with Flying Pancake=39 (JP index)",
 ))
 
@@ -818,6 +861,7 @@ _add(Game(
     rom_name="s1945iii",
     orientation=Orientation.TATE,
     difficulty_jp=20, goal_jp="1-ALL",
+    clear_time_1all=11,
     versions=[
         GameVersion("s1945iii", "World/Japan"),
         GameVersion("s1945p", "Strikers 1945 Plus"),
@@ -834,6 +878,7 @@ _add(Game(
     rom_name="samuraia",
     orientation=Orientation.TATE,
     difficulty_jp=12, goal_jp="1-ALL Aine",
+    clear_time_1all=9,
     versions=[
         GameVersion("samuraia", "World"),
         GameVersion("sngkace", "Sengoku Ace Japan"),
@@ -850,6 +895,7 @@ _add(Game(
     rom_name="tengai",
     orientation=Orientation.YOKO,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=12,
     versions=[
         GameVersion("tengai", "World"),
         GameVersion("tengaij", "Sengoku Blade Japan"),
@@ -876,6 +922,7 @@ _add(Game(
     rom_name="dragnblz",
     orientation=Orientation.TATE,
     difficulty_jp=21, goal_jp="1-ALL",
+    clear_time_1all=11,
     notes="2-ALL=37 (JP index)",
 ))
 
@@ -888,6 +935,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,
     difficulty_jp=20, goal_jp="1-ALL",
+    clear_time_1all=11,
     notes="2-ALL=37; Naomi hardware",
 ))
 
@@ -908,6 +956,7 @@ _add(Game(
     rom_name="sbomber",
     orientation=Orientation.TATE,
     difficulty_jp=13, goal_jp="ALL tetris block",
+    clear_time_1all=15,
     notes="Ver. B; Ver. B normal=25 (JP index)",
 ))
 
@@ -926,6 +975,7 @@ _add(Game(
     runahead_frames=2,
     quality=10, difficulty_1cc=7, routing=Routing.HIGH,
     difficulty_jp=18, goal_jp="1-ALL",
+    clear_time_1all=25,
     versions=[
         GameVersion("rtype", "World"),
         GameVersion("rtypej", "Japan"),
@@ -944,6 +994,7 @@ _add(Game(
     runahead_frames=2,
     quality=8, difficulty_1cc=8, routing=Routing.HIGH,
     difficulty_jp=19, goal_jp="1-ALL",
+    clear_time_1all=22,
     versions=[
         GameVersion("rtype2", "World"),
         GameVersion("rtype2j", "Japan"),
@@ -961,6 +1012,7 @@ _add(Game(
     runahead_frames=3,
     quality=6, difficulty_1cc=6, routing=Routing.HIGH,
     difficulty_jp=15, goal_jp="ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("rtypeleo", "World"),
         GameVersion("rtypeleoj", "Japan"),
@@ -975,6 +1027,7 @@ _add(Game(
     rom_name="imgfight",
     orientation=Orientation.TATE,
     difficulty_jp=18, goal_jp="1-ALL",
+    clear_time_1all=22,
     notes="no penalty area; 2-ALL no補習=36; +8 for loop 2 penalty areas (JP index)",
 ))
 
@@ -986,6 +1039,7 @@ _add(Game(
     rom_name="xmultipl",
     orientation=Orientation.YOKO,
     difficulty_jp=15, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="2-ALL=26 (JP index)",
 ))
 
@@ -997,6 +1051,7 @@ _add(Game(
     rom_name="airduel",
     orientation=Orientation.TATE,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="without autofire (JP index)",
 ))
 
@@ -1008,6 +1063,7 @@ _add(Game(
     rom_name="inthunt",
     orientation=Orientation.YOKO,
     difficulty_jp=23, goal_jp="ALL",
+    clear_time_1all=22,
     versions=[
         GameVersion("inthunt", "World"),
         GameVersion("inthuntu", "USA"),
@@ -1034,6 +1090,7 @@ _add(Game(
     rom_name="mysticri",
     orientation=Orientation.YOKO,
     difficulty_jp=15, goal_jp="1-ALL",
+    clear_time_1all=22,
     aliases=["Gun Hohki"],
     notes="2-ALL=39 (JP index)",
 ))
@@ -1051,6 +1108,7 @@ _add(Game(
     rom_name="raiden",
     orientation=Orientation.TATE,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=28,
     notes="+2 without autofire (JP index)",
 ))
 
@@ -1062,6 +1120,7 @@ _add(Game(
     rom_name="raiden2",
     orientation=Orientation.TATE,
     difficulty_jp=30, goal_jp="1-ALL",
+    clear_time_1all=30,
     versions=[
         GameVersion("raiden2", "World"),
         GameVersion("raiden2j", "Japan"),
@@ -1079,6 +1138,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=7, difficulty_1cc=6, routing=Routing.LOW,
     difficulty_jp=5, goal_jp="Practice course radar",
+    clear_time_1all=25,
     versions=[
         GameVersion("raidendx", "UK"),
         GameVersion("raidendxj", "Japan"),
@@ -1095,6 +1155,7 @@ _add(Game(
     rom_name="rdft",
     orientation=Orientation.TATE,
     difficulty_jp=7, goal_jp="ALL as Slave",
+    clear_time_1all=20,
     versions=[
         GameVersion("rdft", "Germany"),
         GameVersion("rdftj", "Japan"),
@@ -1112,6 +1173,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=7, difficulty_1cc=6, routing=Routing.LOW,
     difficulty_jp=2, goal_jp="ALL with TLB Fairy",
+    clear_time_1all=20,
     versions=[
         GameVersion("rdft2", "Germany"),
         GameVersion("rdft2j", "Japan"),
@@ -1129,6 +1191,7 @@ _add(Game(
     orientation=Orientation.TATE,
     quality=6, difficulty_1cc=4, routing=Routing.LOW,
     difficulty_jp=9, goal_jp="ALL3 with TLB Fairy",
+    clear_time_1all=22,
     versions=[
         GameVersion("rfjet", "Germany"),
         GameVersion("rfjetj", "Japan"),
@@ -1145,6 +1208,7 @@ _add(Game(
     rom_name="viprp1",
     orientation=Orientation.TATE,
     difficulty_jp=27, goal_jp="ALL new ver",
+    clear_time_1all=25,
     notes="old ver no autofire=36; -6/-3 with autofire (JP index)",
 ))
 
@@ -1162,6 +1226,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     quality=4, difficulty_1cc=4, routing=Routing.HIGH,
     difficulty_jp=10, goal_jp="1-ALL",
+    clear_time_1all=15,
     aliases=["Nemesis"],
 ))
 
@@ -1174,6 +1239,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     quality=5, difficulty_1cc=5, routing=Routing.HIGH,
     difficulty_jp=11, goal_jp="1-ALL type 4",
+    clear_time_1all=28,
     aliases=["Gofer no Yabou"],
     notes="+1 for type 3; +2 for type 1/2 (JP index)",
 ))
@@ -1187,6 +1253,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     quality=6, difficulty_1cc=4, routing=Routing.HIGH,
     difficulty_jp=30, goal_jp="1-ALL type B",
+    clear_time_1all=35,
     notes="+2 A, +4 C, +1 D; +2 for 2-ALL; +13 for 3-ALL+ (JP index)",
 ))
 
@@ -1199,6 +1266,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     requires_mame=True,
     difficulty_jp=23, goal_jp="1-ALL equip 5",
+    clear_time_1all=28,
     notes="+1 equip 1; +2 equip 2/6; +4 equip 3 (JP index)",
 ))
 
@@ -1210,6 +1278,7 @@ _add(Game(
     rom_name="salamand",
     orientation=Orientation.YOKO,
     difficulty_jp=9, goal_jp="1-ALL",
+    clear_time_1all=15,
     versions=[
         GameVersion("salamand", "World"),
         GameVersion("salamandj", "Japan"),
@@ -1229,6 +1298,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     requires_mame=True,
     difficulty_jp=11, goal_jp="1-ALL",
+    clear_time_1all=18,
     notes="2-ALL=24; System GX hardware",
 ))
 
@@ -1240,6 +1310,7 @@ _add(Game(
     rom_name="parodius",
     orientation=Orientation.YOKO,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=28,
     notes="2-ALL=44 (JP index)",
 ))
 
@@ -1251,6 +1322,7 @@ _add(Game(
     rom_name="gokuparo",
     orientation=Orientation.YOKO,
     difficulty_jp=23, goal_jp="via Special stage",
+    clear_time_1all=26,
     notes="-10 if no special stage (JP index)",
 ))
 
@@ -1262,6 +1334,7 @@ _add(Game(
     rom_name="sexyparo",
     orientation=Orientation.YOKO,
     difficulty_jp=25, goal_jp="via Special stage",
+    clear_time_1all=26,
     notes="-10 if no special stage (JP index)",
 ))
 
@@ -1274,6 +1347,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     quality=9, difficulty_1cc=7, routing=Routing.HIGH,
     difficulty_jp=14, goal_jp="1-ALL",
+    clear_time_1all=25,
     notes="2-ALL=40; +6 international (JP index)",
 ))
 
@@ -1285,6 +1359,7 @@ _add(Game(
     rom_name="thunderx",
     orientation=Orientation.YOKO,
     difficulty_jp=7, goal_jp="1-ALL",
+    clear_time_1all=15,
     versions=[
         GameVersion("thunderx", "Set 1"),
         GameVersion("thunderxj", "Japan"),
@@ -1312,6 +1387,7 @@ _add(Game(
     rom_name="trigon",
     orientation=Orientation.TATE,
     difficulty_jp=20, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="2-ALL=32 (JP index)",
 ))
 
@@ -1333,6 +1409,7 @@ _add(Game(
     rom_name="twinbee",
     orientation=Orientation.TATE,
     difficulty_jp=13, goal_jp="1-ALL 5 stages",
+    clear_time_1all=12,
     notes="ignoring power items (JP index)",
 ))
 
@@ -1344,6 +1421,7 @@ _add(Game(
     rom_name="detatwin",
     orientation=Orientation.TATE,
     difficulty_jp=17, goal_jp="1-ALL",
+    clear_time_1all=15,
     notes="2-ALL=44 (JP index)",
 ))
 
@@ -1370,6 +1448,7 @@ _add(Game(
     rom_name="darius",
     orientation=Orientation.YOKO,
     difficulty_jp=15, goal_jp="ALL",
+    clear_time_1all=25,
     notes="+1 for EX (JP index)",
 ))
 
@@ -1381,6 +1460,7 @@ _add(Game(
     rom_name="darius2",
     orientation=Orientation.YOKO,
     difficulty_jp=24, goal_jp="ALL",
+    clear_time_1all=28,
     versions=[
         GameVersion("darius2", "World"),
         GameVersion("darius2d", "Dual Screen"),
@@ -1399,6 +1479,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     quality=5, difficulty_1cc=4, routing=Routing.MED,
     difficulty_jp=17, goal_jp="Survival route",
+    clear_time_1all=25,
     versions=[
         GameVersion("dariusg", "World"),
         GameVersion("dariusgj", "Japan"),
@@ -1417,6 +1498,7 @@ _add(Game(
     requires_mame=True,
     quality=8, difficulty_1cc=5, routing=Routing.MED,
     difficulty_jp=14, goal_jp="zone U",
+    clear_time_1all=24,
     notes="with autofire; Ver.2=19 (JP index)",
 ))
 
@@ -1429,6 +1511,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     requires_mame=True,
     quality=7, difficulty_1cc=2, routing=Routing.LOW,
+    clear_time_1all=22,
     notes="Taito Type X2 hardware; EX version also available",
 ))
 
@@ -1441,6 +1524,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=2,
     difficulty_jp=23, goal_jp="ALL",
+    clear_time_1all=22,
     versions=[
         GameVersion("rayforce", "World"),
         GameVersion("rayforcej", "Japan"),
@@ -1481,6 +1565,7 @@ _add(Game(
     runahead_frames=2,
     quality=7, difficulty_1cc=5, routing=Routing.HIGH,
     difficulty_jp=12, goal_jp="ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("metalb", "World"),
         GameVersion("metalbj", "Japan"),
@@ -1496,6 +1581,7 @@ _add(Game(
     rom_name="gunfront",
     orientation=Orientation.TATE,
     difficulty_jp=15, goal_jp="ALL",
+    clear_time_1all=20,
     notes="with autofire (JP index)",
 ))
 
@@ -1507,6 +1593,7 @@ _add(Game(
     rom_name="gekiridn",
     orientation=Orientation.TATE,
     difficulty_jp=3, goal_jp="ALL 2P side",
+    clear_time_1all=18,
     versions=[
         GameVersion("gekiridn", "World"),
         GameVersion("gekiridnj", "Japan"),
@@ -1527,6 +1614,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=3,
     difficulty_jp=10, goal_jp="ALL",
+    clear_time_1all=18,
     versions=[
         GameVersion("1941", "World"),
         GameVersion("1941j", "Japan"),
@@ -1551,6 +1639,7 @@ _add(Game(
     rom_name="1943",
     orientation=Orientation.TATE,
     difficulty_jp=27, goal_jp="vs Yamato",
+    clear_time_1all=22,
     versions=[
         GameVersion("1943", "World"),
         GameVersion("1943j", "Japan"),
@@ -1568,6 +1657,7 @@ _add(Game(
     rom_name="19xx",
     orientation=Orientation.TATE,
     difficulty_jp=20, goal_jp="ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("19xx", "World"),
         GameVersion("19xxj", "Japan"),
@@ -1585,6 +1675,7 @@ _add(Game(
     runahead_frames=3,
     quality=8, difficulty_1cc=9, routing=Routing.HIGH,
     difficulty_jp=18, goal_jp="true ending",
+    clear_time_1all=15,
     versions=[
         GameVersion("gigawing", "USA"),
         GameVersion("gigawingj", "Japan"),
@@ -1601,6 +1692,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     requires_mame=True,
     difficulty_jp=22, goal_jp="with TLB",
+    clear_time_1all=18,
     notes="Naomi hardware",
 ))
 
@@ -1613,6 +1705,7 @@ _add(Game(
     orientation=Orientation.TATE,
     runahead_frames=4,
     difficulty_jp=25, goal_jp="ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("mmatrix", "USA"),
         GameVersion("mmatrixj", "Japan"),
@@ -1627,6 +1720,7 @@ _add(Game(
     rom_name="unsquad",  # US parent; area88 is Japan clone
     orientation=Orientation.YOKO,
     difficulty_jp=12, goal_jp="ALL",
+    clear_time_1all=15,
     versions=[
         GameVersion("unsquad", "U.N. Squadron World"),
         GameVersion("area88", "Japan"),
@@ -1644,6 +1738,7 @@ _add(Game(
     rom_name="cawing",
     orientation=Orientation.YOKO,
     difficulty_jp=13, goal_jp="ALL",
+    clear_time_1all=18,
     notes="-5 with autofire (JP index)",
 ))
 
@@ -1655,6 +1750,7 @@ _add(Game(
     rom_name="sidearms",
     orientation=Orientation.YOKO,
     difficulty_jp=12, goal_jp="ALL",
+    clear_time_1all=18,
     notes="without autofire (JP index)",
 ))
 
@@ -1673,6 +1769,7 @@ _add(Game(
     runahead_frames=2,
     quality=8, difficulty_1cc=5, routing=Routing.MED,
     difficulty_jp=24, goal_jp="ALL",
+    clear_time_1all=12,
     notes="-1 with autofire (JP index)",
 ))
 
@@ -1693,6 +1790,7 @@ _add(Game(
     rom_name="lresort",
     orientation=Orientation.YOKO,
     difficulty_jp=9, goal_jp="2-ALL",
+    clear_time_1all=12,
     notes="with autofire (JP index)",
 ))
 
@@ -1704,6 +1802,7 @@ _add(Game(
     rom_name="preisle2",
     orientation=Orientation.YOKO,
     difficulty_jp=4, goal_jp="ALL",
+    clear_time_1all=10,
     notes="-1 with autofire (JP index)",
 ))
 
@@ -1730,6 +1829,7 @@ _add(Game(
     rom_name="tdragon",
     orientation=Orientation.TATE,
     difficulty_jp=31, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="-1 with autofire (JP index)",
 ))
 
@@ -1741,6 +1841,7 @@ _add(Game(
     rom_name="tdragon2",
     orientation=Orientation.TATE,
     difficulty_jp=28, goal_jp="ALL 2P or 1P autofire",
+    clear_time_1all=22,
     notes="+6 for 1P no autofire (JP index)",
 ))
 
@@ -1753,6 +1854,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     runahead_frames=2,
     difficulty_jp=32, goal_jp="1-ALL",
+    clear_time_1all=22,
     notes="-5 with autofire (JP index)",
 ))
 
@@ -1764,6 +1866,7 @@ _add(Game(
     rom_name="p47aces",
     orientation=Orientation.YOKO,
     difficulty_jp=39, goal_jp="ALL",
+    clear_time_1all=25,
     notes="-2 with autofire (JP index)",
 ))
 
@@ -1775,6 +1878,7 @@ _add(Game(
     rom_name="mustang",
     orientation=Orientation.TATE,
     difficulty_jp=33, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="-8 with autofire (JP index)",
 ))
 
@@ -1796,6 +1900,7 @@ _add(Game(
     rom_name="macross",
     orientation=Orientation.TATE,
     difficulty_jp=17, goal_jp="2-ALL",
+    clear_time_1all=10,
     aliases=["Super Dimension Fortress Macross"],
     notes="1-ALL=8 (JP index)",
 ))
@@ -1813,6 +1918,7 @@ _add(Game(
     rom_name="aerofgt",  # Parent; sonicwi is Japan clone
     orientation=Orientation.TATE,
     difficulty_jp=16, goal_jp="1-ALL",
+    clear_time_1all=10,
     versions=[
         GameVersion("aerofgt", "World"),
         GameVersion("sonicwi", "Japan"),
@@ -1840,6 +1946,7 @@ _add(Game(
     rom_name="sonicwi3",
     orientation=Orientation.TATE,
     difficulty_jp=13, goal_jp="1-ALL P61",
+    clear_time_1all=9,
     notes="2-ALL=21 (JP index)",
 ))
 
@@ -1851,6 +1958,7 @@ _add(Game(
     rom_name="agallet",
     orientation=Orientation.TATE,
     difficulty_jp=19, goal_jp="ALL",
+    clear_time_1all=12,
     versions=[
         GameVersion("agallet", "Europe"),
         GameVersion("agalletj", "Akuu Gallet Japan"),
@@ -1882,6 +1990,7 @@ _add(Game(
     rom_name="vasara2",
     orientation=Orientation.TATE,
     difficulty_jp=21, goal_jp="天の巻 1-ALL",
+    clear_time_1all=14,
     notes="+3 with Takeda Nobukatsu; 天の巻 2-ALL=39 (JP index)",
 ))
 
@@ -1893,6 +2002,7 @@ _add(Game(
     rom_name="stmblade",
     orientation=Orientation.TATE,
     difficulty_jp=3, goal_jp="1-ALL",
+    clear_time_1all=10,
     versions=[
         GameVersion("stmblade", "USA"),
         GameVersion("stmbladej", "Japan"),
@@ -1922,6 +2032,7 @@ _add(Game(
     rom_name="tfrceac",
     orientation=Orientation.YOKO,
     quality=6, difficulty_1cc=2, routing=Routing.LOW,
+    clear_time_1all=22,
     versions=[
         GameVersion("tfrceac", "World"),
         GameVersion("tfrceacj", "Japan"),
@@ -1943,6 +2054,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,
     difficulty_jp=22, goal_jp="Stage 2 route",
+    clear_time_1all=35,
     notes="Stage 4 route=25; ST-V hardware",
 ))
 
@@ -1956,6 +2068,7 @@ _add(Game(
     requires_mame=True,
     quality=7, difficulty_1cc=3, routing=Routing.LOW,
     difficulty_jp=13, goal_jp="Easy",
+    clear_time_1all=22,
     notes="Normal=21, Hard=34; Naomi hardware",
 ))
 
@@ -1967,6 +2080,7 @@ _add(Game(
     rom_name="daioh",
     orientation=Orientation.TATE,
     difficulty_jp=24, goal_jp="1-ALL",
+    clear_time_1all=24,
     notes="2-ALL=36; -1 US version (JP index)",
 ))
 
@@ -1978,6 +2092,7 @@ _add(Game(
     rom_name="stg",
     orientation=Orientation.TATE,
     difficulty_jp=27, goal_jp="ALL",
+    clear_time_1all=25,
     notes="-5 with autofire (JP index)",
 ))
 
@@ -1989,6 +2104,7 @@ _add(Game(
     rom_name="zingzip",
     orientation=Orientation.TATE,
     difficulty_jp=34, goal_jp="1-ALL",
+    clear_time_1all=28,
     notes="as 1P; with autofire (JP index)",
 ))
 
@@ -2010,6 +2126,7 @@ _add(Game(
     rom_name="wrofaero",
     orientation=Orientation.TATE,
     difficulty_jp=18, goal_jp="1-ALL",
+    clear_time_1all=22,
     notes="2-ALL=24 (JP index)",
 ))
 
@@ -2021,6 +2138,7 @@ _add(Game(
     rom_name="nost",
     orientation=Orientation.TATE,
     difficulty_jp=26, goal_jp="ALL",
+    clear_time_1all=25,
     versions=[
         GameVersion("nost", "World"),
         GameVersion("nostj", "Japan"),
@@ -2037,6 +2155,7 @@ _add(Game(
     rom_name="sandscrp",
     orientation=Orientation.TATE,
     difficulty_jp=14, goal_jp="1-ALL",
+    clear_time_1all=20,
     notes="with autofire (JP index)",
 ))
 
@@ -2049,6 +2168,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,
     difficulty_jp=1, goal_jp="upper left corner",
+    clear_time_1all=15,
     notes="+22 without corner cheese; PS2 Arcade hardware",
 ))
 
@@ -2060,6 +2180,7 @@ _add(Game(
     rom_name="ktiger2",
     orientation=Orientation.TATE,
     difficulty_jp=6, goal_jp="ALL 1P side",
+    clear_time_1all=18,
     notes="+5 as 2P (JP index)",
 ))
 
@@ -2072,6 +2193,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,  # ST-V hardware, not in FBNeo
     difficulty_jp=25, goal_jp="1-ALL",
+    clear_time_1all=24,
     versions=[
         GameVersion("sngkstrk", "Gekioh Japan"),
     ],
@@ -2089,6 +2211,7 @@ _add(Game(
     requires_mame=True,
     quality=6, difficulty_1cc=6, routing=Routing.LOW,
     difficulty_jp=12, goal_jp="True Ending",
+    clear_time_1all=22,
     notes="Naomi hardware",
 ))
 
@@ -2101,6 +2224,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,  # Taito Type X, not in FBNeo
     difficulty_jp=21, goal_jp="ALL",
+    clear_time_1all=22,
     aliases=["Shikigami no Shiro"],
 ))
 
@@ -2135,6 +2259,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,  # SH3 hardware, not in FBNeo
     difficulty_jp=19, goal_jp="X-A no TLB",
+    clear_time_1all=10,
     aliases=["Psyvariar Revision"],
     notes="+12 with TLB (JP index)",
 ))
@@ -2148,6 +2273,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,  # SH3 hardware, not in FBNeo
     difficulty_jp=19, goal_jp="no TLB",
+    clear_time_1all=12,
     notes="+13 with TLB (JP index)",
 ))
 
@@ -2160,6 +2286,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,
     difficulty_jp=15, goal_jp="1-ALL",
+    clear_time_1all=18,
     notes="2-ALL=23; Naomi hardware",
 ))
 
@@ -2172,6 +2299,7 @@ _add(Game(
     orientation=Orientation.YOKO,
     requires_mame=True,
     difficulty_jp=15, goal_jp="6A",
+    clear_time_1all=20,
     notes="+3 for B/D; +2 for C; Naomi hardware",
 ))
 
@@ -2184,6 +2312,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,
     difficulty_jp=0, goal_jp="Easy",
+    clear_time_1all=18,
     notes="Naomi hardware",
 ))
 
@@ -2196,6 +2325,7 @@ _add(Game(
     orientation=Orientation.TATE,
     requires_mame=True,
     difficulty_jp=20, goal_jp="Laser",
+    clear_time_1all=20,
     notes="Naomi hardware",
 ))
 
@@ -2207,6 +2337,7 @@ _add(Game(
     rom_name="edf",
     orientation=Orientation.YOKO,
     difficulty_jp=23, goal_jp="ALL",
+    clear_time_1all=24,
     aliases=["Earth Defense Force"],
 ))
 
@@ -2218,6 +2349,7 @@ _add(Game(
     rom_name="mazinger",
     orientation=Orientation.TATE,
     difficulty_jp=9, goal_jp="1-ALL",
+    clear_time_1all=20,
     versions=[
         GameVersion("mazinger", "World"),
         GameVersion("mazingerj", "Japan"),
@@ -2243,6 +2375,7 @@ _add(Game(
     rom_name="dspirit",
     orientation=Orientation.TATE,
     difficulty_jp=16, goal_jp="ALL",
+    clear_time_1all=22,
     notes="-10 with autofire (JP index)",
 ))
 

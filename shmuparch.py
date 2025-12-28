@@ -48,6 +48,7 @@ class SortMode(Enum):
     DEVELOPER = "developer"
     QUALITY = "quality"
     DIFFICULTY = "difficulty"
+    CLEAR_TIME = "clear_time"
     NAME = "name"
 
 
@@ -69,6 +70,7 @@ class GameInfo:
     quality: Optional[int]        # 1-10, higher = better
     difficulty_1cc: Optional[int]  # 1-10, higher = harder
     difficulty_jp: Optional[int]   # 0-45 scale
+    clear_time_1all: Optional[int] # Minutes to 1-ALL clear
     routing: Routing
     requires_mame: bool
     notes: str = ""
@@ -141,6 +143,7 @@ def _build_games_dict():
             quality=game.quality,
             difficulty_1cc=game.difficulty_1cc,
             difficulty_jp=game.difficulty_jp,
+            clear_time_1all=game.clear_time_1all,
             routing=game.routing,
             requires_mame=game.requires_mame,
             notes=game.notes,
@@ -307,6 +310,29 @@ def get_sorted_games(sort_mode: SortMode, filter_fn=None, show_missing: bool = T
         ]
         return [(name, games) for name, games in tiers if games]
 
+    elif sort_mode == SortMode.CLEAR_TIME:
+        # Sort by clear time ascending (shortest first)
+        def t_key(g):
+            if g.clear_time_1all is not None:
+                return (g.clear_time_1all, g.name)
+            return (999, g.name)  # Unknown at end
+
+        sorted_games = sorted(all_games, key=t_key)
+
+        # Group into time tiers
+        def in_time_tier(g, low, high):
+            t = g.clear_time_1all
+            return t is not None and low <= t <= high
+
+        tiers = [
+            ("⚡ Quick (≤18 min)", [g for g in sorted_games if in_time_tier(g, 0, 18)]),
+            ("🕐 Short (19-25 min)", [g for g in sorted_games if in_time_tier(g, 19, 25)]),
+            ("🕑 Medium (26-32 min)", [g for g in sorted_games if in_time_tier(g, 26, 32)]),
+            ("🕒 Long (>32 min)", [g for g in sorted_games if g.clear_time_1all is not None and g.clear_time_1all > 32]),
+            ("Unknown", [g for g in sorted_games if g.clear_time_1all is None]),
+        ]
+        return [(name, games) for name, games in tiers if games]
+
     elif sort_mode == SortMode.NAME:
         # Alphabetical by name
         sorted_games = sorted(all_games, key=lambda x: x.name.lower())
@@ -331,6 +357,7 @@ def parse_filter(filter_text: str):
         - Plain text: matches name or rom
         - q>N, q<N, q=N: quality filter
         - d>N, d<N, d=N: difficulty filter
+        - t>N, t<N, t=N: clear time filter (minutes)
         - r:low, r:med, r:high: routing filter
         - dev:name: developer filter
 
@@ -367,6 +394,17 @@ def parse_filter(filter_text: str):
                 conditions.append(lambda g, v=val: (n := get_normalized_difficulty(g)) is not None and n < v)
             else:
                 conditions.append(lambda g, v=val: (n := get_normalized_difficulty(g)) is not None and int(n) == int(v))
+
+        # Clear time filter: t>25, t<20, t=22 (in minutes)
+        elif m := re.match(r'^t([<>=])(\d+)$', part):
+            op, val = m.groups()
+            val = int(val)
+            if op == '>':
+                conditions.append(lambda g, v=val: g.clear_time_1all is not None and g.clear_time_1all > v)
+            elif op == '<':
+                conditions.append(lambda g, v=val: g.clear_time_1all is not None and g.clear_time_1all < v)
+            else:
+                conditions.append(lambda g, v=val: g.clear_time_1all == v)
 
         # Routing filter: r:low, r:med, r:high
         elif m := re.match(r'^r:(low|med|high)$', part):
@@ -495,6 +533,10 @@ def format_ratings(info: GameInfo, compact: bool = True) -> str:
         norm = get_normalized_difficulty(info)
         parts.append(f"D~{int(norm)}")
 
+    # Clear time (1-ALL)
+    if info.clear_time_1all is not None:
+        parts.append(f"T{info.clear_time_1all}")
+
     # Routing
     routing_map = {Routing.LOW: "L", Routing.MED: "M", Routing.HIGH: "H"}
     if info.routing != Routing.LOW or info.quality is not None:
@@ -535,7 +577,7 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
 
     if not items:
         stdscr.addstr(2, 2, "No games match filter", curses.A_DIM)
-        stdscr.addstr(3, 2, "Filters: q>N d<N r:low/med/high dev:name", curses.A_DIM)
+        stdscr.addstr(3, 2, "Filters: q>N d<N t<N r:low/med/high dev:name", curses.A_DIM)
         stdscr.refresh()
         return items
 
@@ -544,6 +586,7 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
         SortMode.DEVELOPER: "Developer",
         SortMode.QUALITY: "Quality",
         SortMode.DIFFICULTY: "Difficulty",
+        SortMode.CLEAR_TIME: "Clear Time",
         SortMode.NAME: "Name",
     }
     missing_indicator = " [+Missing]" if show_missing else ""
@@ -665,6 +708,8 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
                 details.append(f"1CC Diff: {info.difficulty_1cc}/10")
             if info.difficulty_jp is not None:
                 details.append(f"JP Diff: {info.difficulty_jp}/45")
+            if info.clear_time_1all is not None:
+                details.append(f"1-ALL: ~{info.clear_time_1all}min")
             routing_names = {Routing.LOW: "Low", Routing.MED: "Medium", Routing.HIGH: "High"}
             details.append(f"Routing: {routing_names[info.routing]}")
 
@@ -766,7 +811,7 @@ def main_menu(stdscr):
     stdscr.keypad(True)
 
     # Sort modes cycle order
-    sort_modes = [SortMode.DEVELOPER, SortMode.QUALITY, SortMode.DIFFICULTY, SortMode.NAME]
+    sort_modes = [SortMode.DEVELOPER, SortMode.QUALITY, SortMode.DIFFICULTY, SortMode.CLEAR_TIME, SortMode.NAME]
     sort_mode = SortMode.DEVELOPER
     selected_idx = 1  # Start on first game, not category
     scroll_offset = 0
