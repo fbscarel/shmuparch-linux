@@ -31,6 +31,22 @@ MISTER_MODE = False
 MISTER_RETROARCH_BIN = Path("/home/fbs/src/RetroArch/retroarch")
 MISTER_CONFIG_FILE = SHMUPARCH_DIR / "retroarch-mister.cfg"
 
+# Console mode: launch console games instead of arcade
+CONSOLE_MODE = False
+CONSOLE_ROM_BASE = Path("/mnt/z/roms")
+
+# Console platform -> (core_filename, rom_subdirectory)
+CONSOLE_CORES = {
+    Platform.PCE: ("mednafen_pce_libretro.so", "pcengine"),
+    Platform.GENESIS: ("genesis_plus_gx_libretro.so", "genesis"),
+    Platform.SNES: ("bsnes_libretro.so", "snes"),
+    Platform.PS1: ("mednafen_psx_hw_libretro.so", "psx"),
+    Platform.SATURN: ("mednafen_saturn_libretro.so", "saturn"),
+    Platform.NES: ("mesen_libretro.so", "nes"),
+    Platform.GB: ("gambatte_libretro.so", "gameboy"),
+    Platform.GG: ("genesis_plus_gx_libretro.so", "gamegear"),
+}
+
 # NVIDIA GPU environment variables (force discrete GPU on hybrid systems)
 NVIDIA_ENV = {
     "__NV_PRIME_RENDER_OFFLOAD": "1",
@@ -45,6 +61,7 @@ GAME_PERFORMANCE_CMD = "/usr/bin/game-performance"
 
 class SortMode(Enum):
     """Sort modes for game list."""
+
     DEVELOPER = "developer"
     QUALITY = "quality"
     DIFFICULTY = "difficulty"
@@ -55,6 +72,7 @@ class SortMode(Enum):
 @dataclass
 class GameVersion:
     """A specific version/ROM of a game."""
+
     rom_name: str
     suffix: str  # e.g., "Japan", "Arrange 1.1", "" for parent
     exists: bool = False  # Whether ROM exists on disk
@@ -63,16 +81,19 @@ class GameVersion:
 @dataclass
 class GameInfo:
     """Game information for display and sorting."""
-    rom_name: str
+
+    rom_name: str  # Arcade ROM name (e.g., "ddonpach")
     name: str
     developer: str
     runahead: int
-    quality: Optional[int]        # 1-10, higher = better
+    quality: Optional[int]  # 1-10, higher = better
     difficulty_1cc: Optional[int]  # 1-10, higher = harder
-    difficulty_jp: Optional[int]   # 0-45 scale
-    clear_time_1all: Optional[int] # Minutes to 1-ALL clear
+    difficulty_jp: Optional[int]  # 0-45 scale
+    clear_time_1all: Optional[int]  # Minutes to 1-ALL clear
     routing: Routing
     requires_mame: bool
+    platform: Platform = Platform.ARCADE
+    rom_file: str = ""  # Console ROM filename
     notes: str = ""
     versions: list = None  # List of GameVersion objects
 
@@ -89,9 +110,22 @@ class GameInfo:
         return len(self.available_versions())
 
 
-def check_rom_exists(rom_name):
-    """Check if ROM file exists."""
-    return (ROM_DIR / f"{rom_name}.zip").exists()
+def check_rom_exists(
+    rom_name: str = "", rom_file: str = "", platform: Platform = Platform.ARCADE
+) -> bool:
+    """Check if ROM file exists.
+
+    Args:
+        rom_name: Arcade ROM name (without .zip)
+        rom_file: Console ROM filename (with .zip)
+        platform: Game platform for path resolution
+    """
+    if rom_name and platform in (Platform.ARCADE, Platform.NEOGEO):
+        return (ROM_DIR / f"{rom_name}.zip").exists()
+    elif rom_file and platform in CONSOLE_CORES:
+        _, rom_subdir = CONSOLE_CORES[platform]
+        return (CONSOLE_ROM_BASE / rom_subdir / rom_file).exists()
+    return False
 
 
 def _build_games_dict():
@@ -99,44 +133,75 @@ def _build_games_dict():
 
     Format: base_name -> GameInfo (with versions list)
     Groups all ROM versions under a single game entry.
+    Filters by CONSOLE_MODE: arcade games or console games.
     """
     games = {}
 
+    # Define which platforms to include based on mode
+    if CONSOLE_MODE:
+        allowed_platforms = set(CONSOLE_CORES.keys())
+    else:
+        allowed_platforms = {Platform.ARCADE, Platform.NEOGEO}
+
     for game in GAMES_DB.values():
-        # Skip non-arcade games
-        if game.platform not in (Platform.ARCADE, Platform.NEOGEO):
+        # Skip games not matching current mode
+        if game.platform not in allowed_platforms:
             continue
 
-        if not game.rom_name:
-            continue
+        # Console games use rom_file, arcade games use rom_name
+        if CONSOLE_MODE:
+            if not game.rom_file:
+                continue
+            rom_exists = check_rom_exists(
+                rom_file=game.rom_file, platform=game.platform
+            )
+            versions = [
+                GameVersion(
+                    rom_name=game.rom_file,  # Use rom_file as identifier
+                    suffix="",
+                    exists=rom_exists,
+                )
+            ]
+        else:
+            # Arcade mode - original logic
+            if not game.rom_name:
+                continue
 
-        # Build list of versions
-        versions = []
-        seen_roms = set()
+            # Build list of versions
+            versions = []
+            seen_roms = set()
 
-        # Add versions from game.versions (may include parent)
-        for version in game.versions:
-            if version.rom_name and version.rom_name not in seen_roms:
-                seen_roms.add(version.rom_name)
-                ver_exists = check_rom_exists(version.rom_name)
-                versions.append(GameVersion(
-                    rom_name=version.rom_name,
-                    suffix=version.suffix or "",
-                    exists=ver_exists,
-                ))
+            # Add versions from game.versions (may include parent)
+            for version in game.versions:
+                if version.rom_name and version.rom_name not in seen_roms:
+                    seen_roms.add(version.rom_name)
+                    ver_exists = check_rom_exists(
+                        rom_name=version.rom_name, platform=game.platform
+                    )
+                    versions.append(
+                        GameVersion(
+                            rom_name=version.rom_name,
+                            suffix=version.suffix or "",
+                            exists=ver_exists,
+                        )
+                    )
 
-        # If no versions defined, use parent ROM
-        if not versions:
-            parent_exists = check_rom_exists(game.rom_name)
-            versions.append(GameVersion(
-                rom_name=game.rom_name,
-                suffix="",
-                exists=parent_exists,
-            ))
+            # If no versions defined, use parent ROM
+            if not versions:
+                parent_exists = check_rom_exists(
+                    rom_name=game.rom_name, platform=game.platform
+                )
+                versions.append(
+                    GameVersion(
+                        rom_name=game.rom_name,
+                        suffix="",
+                        exists=parent_exists,
+                    )
+                )
 
         # Create single GameInfo with all versions
         games[game.name] = GameInfo(
-            rom_name=game.rom_name,  # Primary ROM
+            rom_name=game.rom_name,
             name=game.name,
             developer=game.developer,
             runahead=game.runahead_frames,
@@ -146,6 +211,8 @@ def _build_games_dict():
             clear_time_1all=game.clear_time_1all,
             routing=game.routing,
             requires_mame=game.requires_mame,
+            platform=game.platform,
+            rom_file=game.rom_file,
             notes=game.notes,
             versions=versions,
         )
@@ -164,13 +231,15 @@ def _build_mame_games():
                 mame_games.add(version.rom_name)
 
     # Add hardware-specific games not in the shmup database
-    mame_games.update({
-        "cotton2",     # Cotton 2 (ST-V)
-        "cottonbm",    # Cotton Boomerang (ST-V)
-        "elandore",    # Elan Doree (ST-V)
-        "sss",         # Steep Slope Sliders (ST-V, not a shmup)
-        "batmanfr",    # Batman Forever (ST-V, not a shmup)
-    })
+    mame_games.update(
+        {
+            "cotton2",  # Cotton 2 (ST-V)
+            "cottonbm",  # Cotton Boomerang (ST-V)
+            "elandore",  # Elan Doree (ST-V)
+            "sss",  # Steep Slope Sliders (ST-V, not a shmup)
+            "batmanfr",  # Batman Forever (ST-V, not a shmup)
+        }
+    )
 
     return mame_games
 
@@ -275,12 +344,22 @@ def get_sorted_games(sort_mode: SortMode, filter_fn=None, show_missing: bool = T
         # Sort by quality descending (best first), group by quality tier
         def q_key(g):
             return (-(g.quality or 0), g.name)
+
         sorted_games = sorted(all_games, key=q_key)
         # Group into tiers: 9-10 (Excellent), 7-8 (Great), 5-6 (Good), 1-4 (Fair), None
         tiers = [
-            ("★★★ Excellent (9-10)", [g for g in sorted_games if g.quality and g.quality >= 9]),
-            ("★★ Great (7-8)", [g for g in sorted_games if g.quality and 7 <= g.quality < 9]),
-            ("★ Good (5-6)", [g for g in sorted_games if g.quality and 5 <= g.quality < 7]),
+            (
+                "★★★ Excellent (9-10)",
+                [g for g in sorted_games if g.quality and g.quality >= 9],
+            ),
+            (
+                "★★ Great (7-8)",
+                [g for g in sorted_games if g.quality and 7 <= g.quality < 9],
+            ),
+            (
+                "★ Good (5-6)",
+                [g for g in sorted_games if g.quality and 5 <= g.quality < 7],
+            ),
             ("Fair (1-4)", [g for g in sorted_games if g.quality and g.quality < 5]),
             ("Unrated", [g for g in sorted_games if g.quality is None]),
         ]
@@ -306,7 +385,10 @@ def get_sorted_games(sort_mode: SortMode, filter_fn=None, show_missing: bool = T
             ("🟡 Medium (4-6)", [g for g in sorted_games if in_tier(g, 4.0, 6.99)]),
             ("🟠 Hard (7-8)", [g for g in sorted_games if in_tier(g, 7.0, 8.99)]),
             ("🔴 Expert (9-10)", [g for g in sorted_games if in_tier(g, 9.0, 10.0)]),
-            ("Unrated", [g for g in sorted_games if get_normalized_difficulty(g) is None]),
+            (
+                "Unrated",
+                [g for g in sorted_games if get_normalized_difficulty(g) is None],
+            ),
         ]
         return [(name, games) for name, games in tiers if games]
 
@@ -326,9 +408,22 @@ def get_sorted_games(sort_mode: SortMode, filter_fn=None, show_missing: bool = T
 
         tiers = [
             ("⚡ Quick (≤18 min)", [g for g in sorted_games if in_time_tier(g, 0, 18)]),
-            ("🕐 Short (19-25 min)", [g for g in sorted_games if in_time_tier(g, 19, 25)]),
-            ("🕑 Medium (26-32 min)", [g for g in sorted_games if in_time_tier(g, 26, 32)]),
-            ("🕒 Long (>32 min)", [g for g in sorted_games if g.clear_time_1all is not None and g.clear_time_1all > 32]),
+            (
+                "🕐 Short (19-25 min)",
+                [g for g in sorted_games if in_time_tier(g, 19, 25)],
+            ),
+            (
+                "🕑 Medium (26-32 min)",
+                [g for g in sorted_games if in_time_tier(g, 26, 32)],
+            ),
+            (
+                "🕒 Long (>32 min)",
+                [
+                    g
+                    for g in sorted_games
+                    if g.clear_time_1all is not None and g.clear_time_1all > 32
+                ],
+            ),
             ("Unknown", [g for g in sorted_games if g.clear_time_1all is None]),
         ]
         return [(name, games) for name, games in tiers if games]
@@ -374,46 +469,65 @@ def parse_filter(filter_text: str):
 
     for part in parts:
         # Quality filter: q>7, q<5, q=8
-        if m := re.match(r'^q([<>=])(\d+)$', part):
+        if m := re.match(r"^q([<>=])(\d+)$", part):
             op, val = m.groups()
             val = int(val)
-            if op == '>':
-                conditions.append(lambda g, v=val: g.quality is not None and g.quality > v)
-            elif op == '<':
-                conditions.append(lambda g, v=val: g.quality is not None and g.quality < v)
+            if op == ">":
+                conditions.append(
+                    lambda g, v=val: g.quality is not None and g.quality > v
+                )
+            elif op == "<":
+                conditions.append(
+                    lambda g, v=val: g.quality is not None and g.quality < v
+                )
             else:
                 conditions.append(lambda g, v=val: g.quality == v)
 
         # Difficulty filter: d>5, d<3, d=7 (uses normalized difficulty from either source)
-        elif m := re.match(r'^d([<>=])(\d+)$', part):
+        elif m := re.match(r"^d([<>=])(\d+)$", part):
             op, val = m.groups()
             val = float(val)
-            if op == '>':
-                conditions.append(lambda g, v=val: (n := get_normalized_difficulty(g)) is not None and n > v)
-            elif op == '<':
-                conditions.append(lambda g, v=val: (n := get_normalized_difficulty(g)) is not None and n < v)
+            if op == ">":
+                conditions.append(
+                    lambda g, v=val: (n := get_normalized_difficulty(g)) is not None
+                    and n > v
+                )
+            elif op == "<":
+                conditions.append(
+                    lambda g, v=val: (n := get_normalized_difficulty(g)) is not None
+                    and n < v
+                )
             else:
-                conditions.append(lambda g, v=val: (n := get_normalized_difficulty(g)) is not None and int(n) == int(v))
+                conditions.append(
+                    lambda g, v=val: (n := get_normalized_difficulty(g)) is not None
+                    and int(n) == int(v)
+                )
 
         # Clear time filter: t>25, t<20, t=22 (in minutes)
-        elif m := re.match(r'^t([<>=])(\d+)$', part):
+        elif m := re.match(r"^t([<>=])(\d+)$", part):
             op, val = m.groups()
             val = int(val)
-            if op == '>':
-                conditions.append(lambda g, v=val: g.clear_time_1all is not None and g.clear_time_1all > v)
-            elif op == '<':
-                conditions.append(lambda g, v=val: g.clear_time_1all is not None and g.clear_time_1all < v)
+            if op == ">":
+                conditions.append(
+                    lambda g, v=val: g.clear_time_1all is not None
+                    and g.clear_time_1all > v
+                )
+            elif op == "<":
+                conditions.append(
+                    lambda g, v=val: g.clear_time_1all is not None
+                    and g.clear_time_1all < v
+                )
             else:
                 conditions.append(lambda g, v=val: g.clear_time_1all == v)
 
         # Routing filter: r:low, r:med, r:high
-        elif m := re.match(r'^r:(low|med|high)$', part):
-            routing_map = {'low': Routing.LOW, 'med': Routing.MED, 'high': Routing.HIGH}
+        elif m := re.match(r"^r:(low|med|high)$", part):
+            routing_map = {"low": Routing.LOW, "med": Routing.MED, "high": Routing.HIGH}
             r = routing_map[m.group(1)]
             conditions.append(lambda g, r=r: g.routing == r)
 
         # Developer filter: dev:cave, dev:toaplan
-        elif m := re.match(r'^dev:(.+)$', part):
+        elif m := re.match(r"^dev:(.+)$", part):
             dev = m.group(1)
             conditions.append(lambda g, d=dev: d in g.developer.lower())
 
@@ -459,14 +573,29 @@ def get_config_file():
     return CONFIG_FILE
 
 
-def launch_game(rom_name, use_mame=None):
+def launch_game(rom_name, use_mame=None, info: GameInfo = None):
     """Launch a game with RetroArch.
 
     Args:
-        rom_name: ROM filename without extension
+        rom_name: ROM filename (without extension for arcade, with .zip for console)
         use_mame: Force MAME core (True), FBNeo (False), or auto-detect (None)
+        info: GameInfo object for console games (provides platform info)
     """
-    rom_path = ROM_DIR / f"{rom_name}.zip"
+    # Determine ROM path and core based on mode
+    if CONSOLE_MODE and info and info.platform in CONSOLE_CORES:
+        core_file, rom_subdir = CONSOLE_CORES[info.platform]
+        rom_path = CONSOLE_ROM_BASE / rom_subdir / info.rom_file
+        core = SHMUPARCH_DIR / "cores" / core_file
+        core_name = info.platform.value
+    else:
+        # Arcade mode
+        rom_path = ROM_DIR / f"{rom_name}.zip"
+        # Auto-detect core if not specified
+        if use_mame is None:
+            use_mame = rom_name in MAME_GAMES
+        core = MAME_CORE if use_mame else FBNEO_CORE
+        core_name = "MAME" if use_mame else "FBNeo"
+
     if not rom_path.exists():
         return False, f"ROM not found: {rom_path}"
 
@@ -474,17 +603,13 @@ def launch_game(rom_name, use_mame=None):
     if not config.exists():
         return False, f"Config not found: {config}"
 
-    # Auto-detect core if not specified
-    if use_mame is None:
-        use_mame = rom_name in MAME_GAMES
-
-    core = MAME_CORE if use_mame else FBNEO_CORE
     if not core.exists():
         return False, f"Core not found: {core}"
 
     # Build command (add verbose in MiSTer mode for debugging)
     retroarch_cmd = [
         get_retroarch_cmd(),
+        "--verbose",
         "--config",
         str(config),
         "-L",
@@ -501,9 +626,8 @@ def launch_game(rom_name, use_mame=None):
         cmd = retroarch_cmd
 
     # Show mode indicator
-    mode = "MiSTer CRT" if MISTER_MODE else "Desktop"
-    core_name = "MAME" if use_mame else "FBNeo"
-    print(f"Launching [{mode}] [{core_name}]: {rom_name}")
+    mode = "MiSTer CRT" if MISTER_MODE else ("Console" if CONSOLE_MODE else "Desktop")
+    print(f"Launching [{mode}] [{core_name}]: {rom_path.stem}")
 
     subprocess.run(cmd, env=get_launch_env())
     return True, None
@@ -545,7 +669,14 @@ def format_ratings(info: GameInfo, compact: bool = True) -> str:
     return " ".join(parts) if parts else ""
 
 
-def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_text="", show_missing: bool = False):
+def draw_menu(
+    stdscr,
+    sort_mode: SortMode,
+    selected_idx,
+    scroll_offset,
+    filter_text="",
+    show_missing: bool = False,
+):
     """Draw the game selection menu.
 
     Args:
@@ -577,7 +708,9 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
 
     if not items:
         stdscr.addstr(2, 2, "No games match filter", curses.A_DIM)
-        stdscr.addstr(3, 2, "Filters: q>N d<N t<N r:low/med/high dev:name", curses.A_DIM)
+        stdscr.addstr(
+            3, 2, "Filters: q>N d<N t<N r:low/med/high dev:name", curses.A_DIM
+        )
         stdscr.refresh()
         return items
 
@@ -590,7 +723,8 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
         SortMode.NAME: "Name",
     }
     missing_indicator = " [+Missing]" if show_missing else ""
-    header = f" SHMUPARCH - Sort: {sort_labels[sort_mode]}{missing_indicator} "
+    mode_indicator = " [CONSOLE]" if CONSOLE_MODE else ""
+    header = f" SHMUPARCH{mode_indicator} - Sort: {sort_labels[sort_mode]}{missing_indicator} "
     stdscr.attron(curses.color_pair(1) | curses.A_BOLD)
     stdscr.addstr(0, (width - len(header)) // 2, header)
     stdscr.attroff(curses.color_pair(1) | curses.A_BOLD)
@@ -600,7 +734,9 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
         filter_str = f" Filter: {filter_text}_ "
         stdscr.addstr(1, 2, filter_str, curses.color_pair(3))
     else:
-        help_text = " Type to filter | Tab: Sort | V: Show missing | Enter: Launch | Q: Quit "
+        help_text = (
+            " Type to filter | Tab: Sort | V: Show missing | Enter: Launch | Q: Quit "
+        )
         stdscr.addstr(1, 2, help_text[: width - 4], curses.A_DIM)
 
     # Calculate visible area
@@ -656,7 +792,9 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
 
             # Compose display: name + version + ratings + frames + core + status
             name_part = info.name
-            suffix_parts = [p for p in [version_str, ratings, frames_str, core_str, status] if p]
+            suffix_parts = [
+                p for p in [version_str, ratings, frames_str, core_str, status] if p
+            ]
             suffix = " " + " ".join(suffix_parts) if suffix_parts else ""
 
             # Calculate available width for name
@@ -710,7 +848,11 @@ def draw_menu(stdscr, sort_mode: SortMode, selected_idx, scroll_offset, filter_t
                 details.append(f"JP Diff: {info.difficulty_jp}/45")
             if info.clear_time_1all is not None:
                 details.append(f"1-ALL: ~{info.clear_time_1all}min")
-            routing_names = {Routing.LOW: "Low", Routing.MED: "Medium", Routing.HIGH: "High"}
+            routing_names = {
+                Routing.LOW: "Low",
+                Routing.MED: "Medium",
+                Routing.HIGH: "High",
+            }
             details.append(f"Routing: {routing_names[info.routing]}")
 
             footer2 = " " + " | ".join(details)
@@ -750,7 +892,9 @@ def draw_version_picker(stdscr, info: GameInfo, selected_idx: int):
         # Draw title
         title = f" Select Version: {info.name} "
         stdscr.attron(curses.color_pair(1) | curses.A_BOLD)
-        stdscr.addstr(popup_y, popup_x + (popup_width - len(title)) // 2, title[:popup_width])
+        stdscr.addstr(
+            popup_y, popup_x + (popup_width - len(title)) // 2, title[:popup_width]
+        )
         stdscr.attroff(curses.color_pair(1) | curses.A_BOLD)
 
         # Draw versions
@@ -765,7 +909,7 @@ def draw_version_picker(stdscr, info: GameInfo, selected_idx: int):
             line = f"{prefix}{suffix_display} ({ver.rom_name})"
 
             if len(line) > popup_width - 4:
-                line = line[:popup_width - 7] + "..."
+                line = line[: popup_width - 7] + "..."
 
             if is_selected:
                 stdscr.attron(curses.color_pair(2) | curses.A_BOLD)
@@ -776,8 +920,12 @@ def draw_version_picker(stdscr, info: GameInfo, selected_idx: int):
 
         # Draw footer
         footer = " Enter: Select | Esc: Cancel "
-        stdscr.addstr(popup_y + popup_height - 1, popup_x + (popup_width - len(footer)) // 2,
-                      footer[:popup_width], curses.color_pair(1) | curses.A_DIM)
+        stdscr.addstr(
+            popup_y + popup_height - 1,
+            popup_x + (popup_width - len(footer)) // 2,
+            footer[:popup_width],
+            curses.color_pair(1) | curses.A_DIM,
+        )
 
         stdscr.refresh()
 
@@ -811,7 +959,13 @@ def main_menu(stdscr):
     stdscr.keypad(True)
 
     # Sort modes cycle order
-    sort_modes = [SortMode.DEVELOPER, SortMode.QUALITY, SortMode.DIFFICULTY, SortMode.CLEAR_TIME, SortMode.NAME]
+    sort_modes = [
+        SortMode.DEVELOPER,
+        SortMode.QUALITY,
+        SortMode.DIFFICULTY,
+        SortMode.CLEAR_TIME,
+        SortMode.NAME,
+    ]
     sort_mode = SortMode.DEVELOPER
     selected_idx = 1  # Start on first game, not category
     scroll_offset = 0
@@ -918,8 +1072,8 @@ def main_menu(stdscr):
                     stdscr.refresh()
                     curses.endwin()
 
-                    # Launch game
-                    success, error = launch_game(rom_to_launch)
+                    # Launch game (pass info for console mode)
+                    success, error = launch_game(rom_to_launch, info=info)
 
                     # Reinitialize curses after game exits
                     stdscr = curses.initscr()
@@ -990,7 +1144,7 @@ def launch_rom_directly(rom_path, use_mame=None):
 
 def main():
     """Entry point."""
-    global MISTER_MODE
+    global MISTER_MODE, CONSOLE_MODE, GAMES, MAME_GAMES
 
     # Parse arguments
     args = sys.argv[1:]
@@ -1001,6 +1155,9 @@ def main():
     while args:
         if args[0] == "--mister":
             MISTER_MODE = True
+            args = args[1:]
+        elif args[0] in ("--console", "-c"):
+            CONSOLE_MODE = True
             args = args[1:]
         elif args[0] == "--mame":
             use_mame = True
@@ -1014,21 +1171,26 @@ def main():
             print("Usage: shmuparch.py [options] [rom_name]")
             print()
             print("Options:")
-            print("  --mister    Stream to MiSTer FPGA (CRT output)")
-            print("  --mame      Use MAME core instead of FBNeo")
-            print("  --menu      Open RetroArch menu directly")
-            print("  --help      Show this help")
+            print("  --console, -c  Console mode (PCE, Genesis, SNES, etc.)")
+            print("  --mister       Stream to MiSTer FPGA (CRT output)")
+            print("  --mame         Use MAME core instead of FBNeo")
+            print("  --menu         Open RetroArch menu directly")
+            print("  --help         Show this help")
             print()
             print("Examples:")
-            print("  ./shmuparch.py              # TUI game selector (Desktop)")
-            print("  ./shmuparch.py --mister     # TUI game selector (MiSTer CRT)")
-            print("  ./shmuparch.py bgaregga     # Launch game (Desktop)")
-            print("  ./shmuparch.py --mister ket # Launch game (MiSTer CRT)")
+            print("  ./shmuparch.py              # Arcade games (Desktop)")
+            print("  ./shmuparch.py --console    # Console games (Desktop)")
+            print("  ./shmuparch.py --mister     # Arcade games (MiSTer CRT)")
+            print("  ./shmuparch.py bgaregga     # Launch arcade game")
             return 0
         else:
             rom_arg = args[0]
             args = args[1:]
             break
+
+    # Rebuild game database based on mode
+    GAMES = _build_games_dict()
+    MAME_GAMES = _build_mame_games()
 
     # Show mode
     if MISTER_MODE:
@@ -1068,9 +1230,24 @@ def main():
         print(f"Error: Config not found: {config}")
         return 1
 
-    if not FBNEO_CORE.exists():
-        print(f"Error: FBNeo core not found: {FBNEO_CORE}")
-        return 1
+    # Check core availability
+    if CONSOLE_MODE:
+        # Check at least one console core exists
+        cores_found = [
+            p
+            for p in CONSOLE_CORES
+            if (SHMUPARCH_DIR / "cores" / CONSOLE_CORES[p][0]).exists()
+        ]
+        if not cores_found:
+            print("Error: No console cores found in cores/")
+            print(
+                "Download from: https://buildbot.libretro.com/nightly/linux/x86_64/latest/"
+            )
+            return 1
+    else:
+        if not FBNEO_CORE.exists():
+            print(f"Error: FBNeo core not found: {FBNEO_CORE}")
+            return 1
 
     # Check if retroarch is installed (for desktop mode)
     if not MISTER_MODE:
@@ -1081,8 +1258,13 @@ def main():
             return 1
 
     # Launch TUI
-    mode = "MiSTer CRT" if MISTER_MODE else "Desktop"
-    print(f"Starting ShmupArch [{mode}]...")
+    if CONSOLE_MODE:
+        mode = "Console"
+    elif MISTER_MODE:
+        mode = "MiSTer CRT"
+    else:
+        mode = "Desktop"
+    print(f"Starting ShmupArch [{mode}] - {len(GAMES)} games...")
     try:
         curses.wrapper(main_menu)
     except KeyboardInterrupt:

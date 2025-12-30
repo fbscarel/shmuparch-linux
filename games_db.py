@@ -70,8 +70,9 @@ class Game:
     year: int                              # Release year
     platform: Platform                     # Primary platform
 
-    # FBNeo ROM info (for arcade games)
-    rom_name: str = ""                     # Primary ROM name
+    # ROM info
+    rom_name: str = ""                     # Arcade ROM name (e.g., "ddonpach")
+    rom_file: str = ""                     # Console ROM filename (e.g., "Soldier Blade (USA).zip")
     orientation: Orientation = Orientation.TATE
 
     # Emulation settings
@@ -106,12 +107,19 @@ GAMES: dict[str, Game] = {}
 
 def _add(g: Game):
     """Helper to add a game to the database."""
-    GAMES[g.rom_name if g.rom_name else g.name.lower().replace(" ", "")] = g
+    # Primary key: rom_name for arcade, rom_file for console, or name-based fallback
+    if g.rom_name:
+        key = g.rom_name
+    elif g.rom_file:
+        key = g.rom_file
+    else:
+        key = g.name.lower().replace(" ", "")
+    GAMES[key] = g
     # Also index by aliases
     for alias in g.aliases:
-        key = alias.lower().replace(" ", "").replace("-", "").replace(":", "")
-        if key not in GAMES:
-            GAMES[key] = g
+        alias_key = alias.lower().replace(" ", "").replace("-", "").replace(":", "")
+        if alias_key not in GAMES:
+            GAMES[alias_key] = g
 
 
 # =============================================================================
@@ -2401,6 +2409,177 @@ _add(Game(
 
 
 # =============================================================================
+# CONSOLE GAMES - PC ENGINE / TURBOGRAFX-16
+# =============================================================================
+
+_add(Game(
+    name="Soldier Blade",
+    developer="Hudson",
+    year=1992,
+    platform=Platform.PCE,
+    rom_file="Soldier Blade (USA).zip",
+    orientation=Orientation.TATE,
+    quality=3, difficulty_1cc=2, routing=Routing.LOW,
+    runahead_frames=2,
+    notes="Part of Hudson's Soldier series",
+))
+
+_add(Game(
+    name="Super Star Soldier",
+    developer="Hudson",
+    year=1990,
+    platform=Platform.PCE,
+    rom_file="Super Star Soldier (USA).zip",
+    orientation=Orientation.TATE,
+    quality=5, difficulty_1cc=3, routing=Routing.LOW,
+    runahead_frames=2,
+))
+
+_add(Game(
+    name="Final Soldier",
+    developer="Hudson",
+    year=1991,
+    platform=Platform.PCE,
+    rom_file="Final Soldier (Japan) (En).zip",
+    orientation=Orientation.TATE,
+    quality=2, difficulty_1cc=2, routing=Routing.LOW,
+    runahead_frames=2,
+))
+
+_add(Game(
+    name="Gate of Thunder",
+    developer="Hudson/Red",
+    year=1992,
+    platform=Platform.PCE,
+    rom_file="Gate of Thunder (USA).zip",
+    orientation=Orientation.YOKO,
+    quality=7, difficulty_1cc=4, routing=Routing.MED,
+    runahead_frames=2,
+    notes="CD-ROM game, excellent soundtrack",
+))
+
+_add(Game(
+    name="Lords of Thunder",
+    developer="Hudson/Red",
+    year=1993,
+    platform=Platform.PCE,
+    rom_file="Lords of Thunder (USA).zip",
+    orientation=Orientation.YOKO,
+    quality=5, difficulty_1cc=2, routing=Routing.LOW,
+    runahead_frames=2,
+    notes="CD-ROM, fantasy themed",
+))
+
+_add(Game(
+    name="Blazing Lasers",
+    developer="Compile",
+    year=1989,
+    platform=Platform.PCE,
+    rom_file="Blazing Lasers (USA).zip",
+    orientation=Orientation.TATE,
+    quality=3, difficulty_1cc=4, routing=Routing.LOW,
+    runahead_frames=2,
+    aliases=["Gunhed"],
+))
+
+_add(Game(
+    name="Spriggan",
+    developer="Compile",
+    year=1991,
+    platform=Platform.PCE,
+    rom_file="Spriggan (Japan).zip",
+    orientation=Orientation.TATE,
+    quality=7, difficulty_1cc=3, routing=Routing.LOW,
+    runahead_frames=2,
+    notes="CD-ROM, Mark III port",
+))
+
+
+# =============================================================================
+# CONSOLE GAMES - GENESIS / MEGA DRIVE
+# =============================================================================
+
+_add(Game(
+    name="Thunder Force III",
+    developer="Technosoft",
+    year=1990,
+    platform=Platform.GENESIS,
+    rom_file="Thunder Force III (USA).zip",
+    orientation=Orientation.YOKO,
+    quality=9, difficulty_1cc=3, routing=Routing.MED,
+    runahead_frames=2,
+    notes="Classic, arcade version is Thunder Force AC",
+))
+
+_add(Game(
+    name="Thunder Force IV",
+    developer="Technosoft",
+    year=1992,
+    platform=Platform.GENESIS,
+    rom_file="Thunder Force IV (Japan).zip",
+    orientation=Orientation.YOKO,
+    quality=8, difficulty_1cc=8, routing=Routing.HIGH,
+    runahead_frames=2,
+    aliases=["Lightening Force"],
+    notes="Lightening Force in US",
+))
+
+_add(Game(
+    name="M.U.S.H.A.",
+    developer="Compile",
+    year=1990,
+    platform=Platform.GENESIS,
+    rom_file="MUSHA - Metallic Uniframe Super Hybrid Armor (USA).zip",
+    orientation=Orientation.TATE,
+    quality=8, difficulty_1cc=3, routing=Routing.LOW,
+    runahead_frames=2,
+    aliases=["Musha Aleste"],
+))
+
+_add(Game(
+    name="Gleylancer",
+    developer="Masaya",
+    year=1992,
+    platform=Platform.GENESIS,
+    rom_file="Advanced Busterhawk Gleylancer (Japan) (En).zip",
+    orientation=Orientation.YOKO,
+    quality=7, difficulty_1cc=3, routing=Routing.LOW,
+    runahead_frames=2,
+    aliases=["Advanced Busterhawk Gleylancer"],
+))
+
+
+# =============================================================================
+# CONSOLE GAMES - SNES
+# =============================================================================
+
+_add(Game(
+    name="Axelay",
+    developer="Konami",
+    year=1992,
+    platform=Platform.SNES,
+    rom_file="Axelay (USA).zip",
+    orientation=Orientation.TATE,  # Mixed TATE/YOKO
+    quality=8, difficulty_1cc=5, routing=Routing.LOW,
+    runahead_frames=2,
+    notes="Mode 7 effects, alternating TATE/YOKO stages",
+))
+
+_add(Game(
+    name="Super Aleste",
+    developer="Compile",
+    year=1992,
+    platform=Platform.SNES,
+    rom_file="Super Aleste (Japan).zip",
+    orientation=Orientation.TATE,
+    quality=6, difficulty_1cc=4, routing=Routing.MED,
+    runahead_frames=2,
+    aliases=["Space Megaforce"],
+    notes="Space Megaforce in US",
+))
+
+
+# =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
 
@@ -2411,7 +2590,17 @@ def get_game(key: str) -> Game | None:
 
 def get_arcade_games() -> list[Game]:
     """Get all arcade games."""
-    return [g for g in GAMES.values() if g.platform == Platform.ARCADE]
+    return [g for g in GAMES.values() if g.platform in (Platform.ARCADE, Platform.NEOGEO)]
+
+
+def get_console_games() -> list[Game]:
+    """Get all console games."""
+    console_platforms = {
+        Platform.PCE, Platform.GENESIS, Platform.SNES, Platform.PS1,
+        Platform.PS2, Platform.SATURN, Platform.DREAMCAST, Platform.NDS,
+        Platform.PSP, Platform.GB, Platform.GG, Platform.NES,
+    }
+    return [g for g in GAMES.values() if g.platform in console_platforms]
 
 
 def get_games_by_developer(developer: str) -> list[Game]:
@@ -2447,7 +2636,13 @@ _unique_games = {}
 for key, game in GAMES.items():
     if id(game) not in _seen:
         _seen.add(id(game))
-        _unique_games[game.rom_name if game.rom_name else key] = game
+        # Use rom_name for arcade, rom_file for console, or key as fallback
+        if game.rom_name:
+            _unique_games[game.rom_name] = game
+        elif game.rom_file:
+            _unique_games[game.rom_file] = game
+        else:
+            _unique_games[key] = game
 GAMES = _unique_games
 
 
